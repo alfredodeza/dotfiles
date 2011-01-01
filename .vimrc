@@ -129,12 +129,19 @@ command -nargs=1 Vbuffer call VerticalSplitBuffer(<f-args>)
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Leaders
+" => Mappings 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" jj for quick escaping
+imap jj <ESC>
+
 " Make sure we use a better leader key
 let mapleader = ","
 let g:mapleader = ","
 
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Leaders
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Underline Titles 
 nnoremap <Leader>1 yypVr=
 nnoremap <Leader>2 yypVr-

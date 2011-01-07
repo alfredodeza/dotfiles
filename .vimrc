@@ -24,10 +24,12 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-filetype off                                " reset filetype
 set nocompatible
-call pathogen#runtime_append_all_bundles()  " Inits Pathogen
 
+" Pathogen needs to be first to init all plugins
+silent! call pathogen#runtime_append_all_bundles()
+silent! call pathogen#runtime_prepend_subdirectories("~/.vim/bundle")
+ 
 set nowritebackup                           " Hate backups
 set noswapfile                              " ...and swap files
 
@@ -64,7 +66,7 @@ set vb
 
 " GUI Stuff
 if has("gui_running")
-  set autochdir                             " Chdir where the edited file lives
+  "set autochdir                             " Chdir where the edited file lives
   set go-=T                                 " No toolbar
   set guioptions-=L                         " No scrollbar
   set guioptions-=r
@@ -79,22 +81,30 @@ set background=dark
 
 " A status bar that shows nice information
 set laststatus=2
-set statusline=\ %F%m%r%h\ %w\ \ CWD:\ %r%{CurDir()}%h\ \ \ Line:\ %l/%L:%c
+set statusline=%F%m%r%h\ %w\ \ CWD:\ %r%{CurDir()}%h\ \ \ Line:\ %l/%L:%c%{exists('*fugitive#statusline')?fugitive#statusline():''}
 
 " Searching
 set ignorecase
 set smartcase
-
+" Search mappings: These will make it so that going to the next one in a
+" search will center on the line it's found in.
+map N Nzz
+map n nzz
 " Get the title right
 set title
 
 " Highlight search on
 set hlsearch
 
+" Menus
 set wildmode=list:longest,full
+set wildmenu
 
 " For xml, xhtml and html let's use 2 spaces of indentation
 autocmd FileType html,xhtml,xml setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2
+
+" Let me know what command I'm typing 
+set showcmd
 
 " Jumping into arrow darkness with this 
 nnoremap <up> <nop>
@@ -108,7 +118,18 @@ inoremap <right> <nop>
 nnoremap j gj
 nnoremap k gk
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Tag List Plugin
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Set the tags in current dir and walk up if necessary
+" ctags  --exclude='*.js' -R .
+set tags=tags;/
 
+" I have Exuberant Ctags (tag_list plugin)
+let Tlist_Ctags_Cmd = "/usr/local/bin/ctags"
+
+let Tlist_File_Fold_Auto_Close = 1                  " folds all but the current buffer
+let Tlist_GainFocus_On_ToggleOpen = 1               " Go to the list window if I open it
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Python
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -127,6 +148,11 @@ let g:netrw_list_hide='^\.,.\(pyc\|pyo\|o\)$'
 " Vertical Split Buffer 
 command -nargs=1 Vbuffer call VerticalSplitBuffer(<f-args>)
 
+" Edit Vimrc 
+command Vimrc :e $MYVIMRC
+
+" Reload/Source vimrc 
+command Reload :so $MYVIMRC
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Mappings 
@@ -145,6 +171,12 @@ let g:mapleader = ","
 " Underline Titles 
 nnoremap <Leader>1 yypVr=
 nnoremap <Leader>2 yypVr-
+
+" Count current word 
+nmap <Leader>w <Esc>:call Count(expand("<cword>"))<CR>
+
+" Ack searching 
+nmap <Leader>a <Esc>:Ack 
 
 " gundo
 nnoremap <Leader>u <ESC>:GundoToggle<CR>
@@ -168,6 +200,9 @@ nmap <Leader>r <Esc>:call ToggleRelativeNumber()<CR>
 " set hls / nohls
 nmap <Leader>s <Esc>:call ToggleHLSearch()<CR>
 
+" Toggle Tag_List plugin 
+nmap <Leader>c <Esc>:TlistToggle<CR> 
+
 " format xml 
 nmap <Leader>x <Esc>:call FormatXML()<CR>
 
@@ -184,6 +219,12 @@ function! Echo(msg)
   echo a:msg
   let &ruler=x | let &showcmd=y
 endfun
+
+" Count number of occurances of a word
+function Count(word)
+    let count_word = "%s/" . a:word . "//gn"
+    execute count_word
+endfunction
 
 " Vertical Split Buffer 
 function VerticalSplitBuffer(buffer)

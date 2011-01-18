@@ -3,7 +3,11 @@
 "   > Pathogen.vim 
 "     Better Management of VIM plugins 
 "
-"   > GunDo.vim 
+"   > Chapa.vim 
+"     Moves to, or visually selects, or toggles comments on the
+"     next/previous N function,method or class.
+"
+"   > GunDo.vim
 "     Visual Undo in vim with diff's to check the differences
 "
 "   > Conque.vim 
@@ -33,7 +37,7 @@ silent! call pathogen#runtime_prepend_subdirectories("~/.vim/bundle")
 set nowritebackup                           " Hate backups
 set noswapfile                              " ...and swap files
 
-set smartindent
+"set smartindent
 
 " Fixes Comenting hash indentation
 inoremap # X#
@@ -81,7 +85,7 @@ set background=dark
 
 " A status bar that shows nice information
 set laststatus=2
-set statusline=%F%m%r%h\ %w\ \ CWD:\ %r%{CurDir()}%h\ \ \ Line:\ %l/%L:%c%{exists('*fugitive#statusline')?fugitive#statusline():''}
+set statusline=%F%m%r%h\ %w\ \ CWD:\ %r%{CurDir()}%h\ \ \ Line:\ %l/%L:%c
 
 " Searching
 set ignorecase
@@ -130,6 +134,12 @@ let Tlist_Ctags_Cmd = "/usr/local/bin/ctags"
 
 let Tlist_File_Fold_Auto_Close = 1                  " folds all but the current buffer
 let Tlist_GainFocus_On_ToggleOpen = 1               " Go to the list window if I open it
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Chapa Python Plugin
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:chapa_default_mappings = 1
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Python
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -140,7 +150,6 @@ set tabstop=4 expandtab shiftwidth=4 softtabstop=4
 
 " hide some files and remove stupid help
 let g:netrw_list_hide='^\.,.\(pyc\|pyo\|o\)$'
-
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Custom Commands
@@ -205,7 +214,6 @@ nmap <Leader>c <Esc>:TlistToggle<CR>
 
 " format xml 
 nmap <Leader>x <Esc>:call FormatXML()<CR>
-
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Functions
@@ -293,4 +301,8 @@ function! CurDir()
             return curdir
         endfunction
 
+" If we have a local vimrc source it 
+if filereadable(expand("~/.vimrc.local"))
+  source ~/.vimrc.local
+endif
 

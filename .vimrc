@@ -45,7 +45,8 @@ inoremap # X#
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Display
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-colorscheme ir_black                        " Color Theme
+colorscheme paracas                        " Color Theme
+hi Cursor guifg=black guibg=magenta 
 
 set guifont=Menlo:h12                       " Font and Font Size
 
@@ -123,17 +124,12 @@ nnoremap j gj
 nnoremap k gk
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Tag List Plugin
+" => Tags
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Set the tags in current dir and walk up if necessary
 " ctags  --exclude='*.js' -R .
 set tags=tags;/
 
-" I have Exuberant Ctags (tag_list plugin)
-let Tlist_Ctags_Cmd = "/usr/local/bin/ctags"
-
-let Tlist_File_Fold_Auto_Close = 1                  " folds all but the current buffer
-let Tlist_GainFocus_On_ToggleOpen = 1               " Go to the list window if I open it
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Chapa Python Plugin
@@ -155,13 +151,19 @@ let g:netrw_list_hide='^\.,.\(pyc\|pyo\|o\)$'
 " => Custom Commands
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Vertical Split Buffer 
-command -nargs=1 Vbuffer call VerticalSplitBuffer(<f-args>)
+command -nargs=1 -complete=buffer Vbuffer call VerticalSplitBuffer(<f-args>)
 
 " Edit Vimrc 
-command Vimrc :e $MYVIMRC
+command  Vimrc :e $MYVIMRC
 
 " Reload/Source vimrc 
 command Reload :so $MYVIMRC
+
+" Git commit add 
+command Gca call Gca()
+
+" Git Push 
+command Gp exe 'Git push'
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Mappings 
@@ -306,3 +308,8 @@ if filereadable(expand("~/.vimrc.local"))
   source ~/.vimrc.local
 endif
 
+" Git commit add please 
+function! Gca()
+    exe 'Git add .'
+    exe 'Gcommit'
+endfunction

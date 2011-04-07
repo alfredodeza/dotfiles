@@ -10,8 +10,11 @@
 "   > GunDo.vim
 "     Visual Undo in vim with diff's to check the differences
 "
-"   > Conque.vim 
-"     Makes possible to execute anything and run it within VIM.
+"   > Pytest.vim 
+"     Runs your Python tests in Vim.
+"
+"   > Konira.vim 
+"     Same as pytest.vim but for Konira-based files/tests
 "
 "   > Commant-T.vim
 "     Allows easy search and opening of files within a given path 
@@ -21,9 +24,6 @@
 "
 "   > PyFlakes.vim 
 "     Underlines and displays errors with Python on-the-fly
-"
-"   > Autocomplpop.vim
-"     Uses the power of <C-N> and <C-P> for auto completion
 "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General
@@ -45,10 +45,17 @@ inoremap # X#
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Display
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-colorscheme paracas                        " Color Theme
-hi Cursor guifg=black guibg=magenta 
+colorscheme solarized                        " Color Theme
+let g:solarized_termcolors=16                " Solarized with custom palette works best
+                                             " with this option
+set background=dark                          " I have a dark terminal
 
-set guifont=Menlo:h12                       " Font and Font Size
+
+" Regardless of the colorscheme I wand 
+" a magenta cursor
+hi Cursor guifg=black guibg=magenta          
+
+set guifont=Menlo:h14                       " Font and Font Size
 
 " terminal width
 set wrap
@@ -71,7 +78,6 @@ set vb
 
 " GUI Stuff
 if has("gui_running")
-  "set autochdir                             " Chdir where the edited file lives
   set go-=T                                 " No toolbar
   set guioptions-=L                         " No scrollbar
   set guioptions-=r
@@ -81,9 +87,6 @@ endif
 
 set ruler
 
-" I have a dark terminal
-set background=dark
-
 " A status bar that shows nice information
 set laststatus=2
 set statusline=%F%m%r%h\ %w\ \ CWD:\ %r%{CurDir()}%h\ \ \ Line:\ %l/%L:%c
@@ -91,6 +94,7 @@ set statusline=%F%m%r%h\ %w\ \ CWD:\ %r%{CurDir()}%h\ \ \ Line:\ %l/%L:%c
 " Searching
 set ignorecase
 set smartcase
+
 " Search mappings: These will make it so that going to the next one in a
 " search will center on the line it's found in.
 map N Nzz
@@ -101,7 +105,7 @@ set title
 " Highlight search on
 set hlsearch
 
-" Menus
+" Menus like bash/zsh
 set wildmode=list:longest,full
 set wildmenu
 
@@ -122,6 +126,12 @@ inoremap <left> <nop>
 inoremap <right> <nop>
 nnoremap j gj
 nnoremap k gk
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Detect Filetype For Python Testing Tools
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Detect test files and apply according syntax
+autocmd BufNewFile,BufRead,BufEnter *.py call s:SelectTestRunner()
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Tags
@@ -162,6 +172,9 @@ command Reload :so $MYVIMRC
 " Git commit add 
 command Gca call Gca()
 
+" Git commit add all files
+command Gcall call Gcall()
+
 " Git Push 
 command Gp exe 'Git push'
 
@@ -169,7 +182,7 @@ command Gp exe 'Git push'
 " => Mappings 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " jj for quick escaping
-imap jj <ESC>
+imap jk <ESC>
 
 " Make sure we use a better leader key
 let mapleader = ","
@@ -197,22 +210,22 @@ nnoremap <Leader>u <ESC>:GundoToggle<CR>
 nnoremap <Leader>l <ESC>:put =''<CR>
 
 " blank line  above
-nnoremap <Leader>ll <ESC>:put! =''<CR>
+nnoremap <Leader>,l <ESC>:put! =''<CR>
 
 " set paste no paste
-nmap <Leader>p <Esc>:call TogglePaste()<CR>
+nnoremap <Leader>p <Esc>:call TogglePaste()<CR>
 
 " toggle number
-nmap <Leader>n <Esc>:call ToggleNumber()<CR>
+nnoremap <Leader>n <Esc>:call ToggleNumber()<CR>
 
 " toggle relative number 
-nmap <Leader>r <Esc>:call ToggleRelativeNumber()<CR>
+nnoremap <Leader>r <Esc>:call ToggleRelativeNumber()<CR>
 
 " set hls / nohls
-nmap <Leader>s <Esc>:call ToggleHLSearch()<CR>
+nnoremap <Leader>s <Esc>:call ToggleHLSearch()<CR>
 
-" Toggle Tag_List plugin 
-nmap <Leader>c <Esc>:TlistToggle<CR> 
+" visual select last paste
+nnoremap <Leader>v  V`]
 
 " format xml 
 nmap <Leader>x <Esc>:call FormatXML()<CR>
@@ -240,6 +253,7 @@ endfunction
 function VerticalSplitBuffer(buffer)
     let split_command = "vert belowright sb " . a:buffer
     execute split_command
+    execute 'wincmd p'
     call Echo(split_command)
 endfunction
 
@@ -308,8 +322,56 @@ if filereadable(expand("~/.vimrc.local"))
   source ~/.vimrc.local
 endif
 
-" Git commit add please 
+" Git commit add single file please 
 function! Gca()
+    let cwd = expand("%:p")
+    exe 'Git add ' . cwd
+    exe 'Gcommit'
+endfunction
+
+" Git commit add all changed files please 
+function! Gcall()
+    let cwd = expand("%:p")
     exe 'Git add .'
     exe 'Gcommit'
 endfunction
+
+"" Check if we have a konira file
+fun! s:SelectTestRunner()
+    let n = 1
+    while n < 10 && n < line("$")
+      " check for konira
+      let encoding = '\v^#\s+coding:\s+konira'
+      if getline(n) =~ encoding
+        " Pytest
+        nmap <silent><Leader>f <Esc>:Konira file<CR>
+        nmap <silent><Leader>c <Esc>:Konira describe<CR>
+        nmap <silent><Leader>m <Esc>:Konira it<CR>
+        nmap <silent><Leader>,q <Esc>:Konira first<CR>
+        nmap <silent><Leader>,w <Esc>:Konira previous<CR>
+        nmap <silent><Leader>,e <Esc>:Konira next<CR>
+        nmap <silent><Leader>,r <Esc>:Konira last<CR>
+        nmap <silent><Leader>,f <Esc>:Konira fails<CR>
+        nmap <silent><Leader>,d <Esc>:Konira error<CR>
+        nmap <silent><Leader>,s <Esc>:Konira session<CR>
+        nmap <silent><Leader>,a <Esc>:Konira end<CR>
+        return
+      endif
+      let n = n + 1
+      endwhile
+      " If konira was not found then
+      " Pytest
+      nmap <silent><Leader>f <Esc>:Pytest file<CR>
+      nmap <silent><Leader>c <Esc>:Pytest class<CR>
+      nmap <silent><Leader>m <Esc>:Pytest method<CR>
+      nmap <silent><Leader>,q <Esc>:Pytest first<CR>
+      nmap <silent><Leader>,w <Esc>:Pytest previous<CR>
+      nmap <silent><Leader>,e <Esc>:Pytest next<CR>
+      nmap <silent><Leader>,r <Esc>:Pytest last<CR>
+      nmap <silent><Leader>,f <Esc>:Pytest fails<CR>
+      nmap <silent><Leader>,d <Esc>:Pytest error<CR>
+      nmap <silent><Leader>,s <Esc>:Pytest session<CR>
+      nmap <silent><Leader>,a <Esc>:Pytest end<CR>
+endfun
+
+

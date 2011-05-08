@@ -25,6 +25,8 @@
 "   > PyFlakes.vim 
 "     Underlines and displays errors with Python on-the-fly
 "
+"   > Plexer.vim
+"     Multi-line multi-edit to avoid repetitive editing
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -46,16 +48,17 @@ inoremap # X#
 " => Display
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 colorscheme solarized                        " Color Theme
+let g:solarized_visibility='low'
 let g:solarized_termcolors=16                " Solarized with custom palette works best
                                              " with this option
 set background=dark                          " I have a dark terminal
 
 
-" Regardless of the colorscheme I wand 
+" Regardless of the colorscheme I want
 " a magenta cursor
 hi Cursor guifg=black guibg=magenta          
 
-set guifont=Menlo:h14                       " Font and Font Size
+set guifont=Menlo:h14                        " Font and Font Size
 
 " terminal width
 set wrap
@@ -65,15 +68,14 @@ set formatoptions=qrn1
 " Remember cursor position
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
 
-syntax on
+syntax on                                  " always want syntax highlighting
 filetype on                                " enables filetype detection
 filetype plugin on                         " enables filetype specific plugins
-filetype indent on 
+filetype indent on                         " respect filetype indentation 
 
-" keep some more lines for scope
-set scrolloff=5
+set scrolloff=5                            " keep some more lines for scope
 
-set backspace=indent,eol,start
+set backspace=indent,eol,start             " fixes odd backspace behavior
 set vb
 
 " GUI Stuff
@@ -81,10 +83,11 @@ if has("gui_running")
   set go-=T                                 " No toolbar
   set guioptions-=L                         " No scrollbar
   set guioptions-=r
-  set lines=999 columns=999
+  set lines=999 columns=999                 " open as large as possible
   highlight SpellBad term=underline gui=undercurl guisp=Orange
 endif
 
+" Display line and column numbers
 set ruler
 
 " A status bar that shows nice information
@@ -99,6 +102,7 @@ set smartcase
 " search will center on the line it's found in.
 map N Nzz
 map n nzz
+
 " Get the title right
 set title
 
@@ -113,7 +117,13 @@ set wildmenu
 autocmd FileType html,xhtml,xml setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2
 
 " Let me know what command I'm typing 
-set showcmd
+set showcmd                             
+
+" Display a line to show current line
+set cul
+
+" When I go into insert mode, hide the mouse
+set mousehide
 
 " Jumping into arrow darkness with this 
 nnoremap <up> <nop>
@@ -124,21 +134,23 @@ inoremap <up> <nop>
 inoremap <down> <nop>
 inoremap <left> <nop>
 inoremap <right> <nop>
+
+" move one line at a time regardless
+" of wrapping
 nnoremap j gj
 nnoremap k gk
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Other Settings
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set clipboard=unnamed               " copies y, yy, d, D, dd and other to the 
+                                    " system clipboard
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Detect Filetype For Python Testing Tools
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Detect test files and apply according syntax
 autocmd BufNewFile,BufRead,BufEnter *.py call s:SelectTestRunner()
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Tags
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Set the tags in current dir and walk up if necessary
-" ctags  --exclude='*.js' -R .
-set tags=tags;/
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -157,11 +169,22 @@ set tabstop=4 expandtab shiftwidth=4 softtabstop=4
 " hide some files and remove stupid help
 let g:netrw_list_hide='^\.,.\(pyc\|pyo\|o\)$'
 
+" Fix Pyflakes and QuickFix window usage
+let g:pyflakes_use_quickfix = 0
+let g:ackhighlight = 1
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Template Autodetection
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+autocmd BufNewFile,BufRead *.mako,*.mak setlocal ft=html
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Custom Commands
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Vertical Split Buffer 
 command -nargs=1 -complete=buffer Vbuffer call VerticalSplitBuffer(<f-args>)
+command -nargs=* Exe call Command(<q-args>)
 
 " Edit Vimrc 
 command  Vimrc :e $MYVIMRC
@@ -172,7 +195,7 @@ command Reload :so $MYVIMRC
 " Git commit add 
 command Gca call Gca()
 
-" Git commit add all files
+" Git commit add all
 command Gcall call Gcall()
 
 " Git Push 
@@ -188,6 +211,11 @@ imap jk <ESC>
 let mapleader = ","
 let g:mapleader = ","
 
+" Autoclose brackets, parens and curly brackets
+imap ( ()<Esc>i
+imap [ []<Esc>i
+imap { {}<Esc>i
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Leaders
@@ -199,8 +227,11 @@ nnoremap <Leader>2 yypVr-
 " Count current word 
 nmap <Leader>w <Esc>:call Count(expand("<cword>"))<CR>
 
-" Ack searching 
-nmap <Leader>a <Esc>:Ack 
+" Plexer apply changes
+silent! nnoremap <Leader>a <Esc>:Plexer apply<CR>
+
+" Plexer clear
+nnoremap <Leader>,c <Esc>:Plexer clear<CR>
 
 " gundo
 nnoremap <Leader>u <ESC>:GundoToggle<CR>
@@ -217,6 +248,9 @@ nnoremap <Leader>p <Esc>:call TogglePaste()<CR>
 
 " toggle number
 nnoremap <Leader>n <Esc>:call ToggleNumber()<CR>
+
+" add a Plexer mark
+nnoremap <Leader>,m <Esc>:Plexer add<CR>
 
 " toggle relative number 
 nnoremap <Leader>r <Esc>:call ToggleRelativeNumber()<CR>
@@ -347,10 +381,10 @@ fun! s:SelectTestRunner()
         nmap <silent><Leader>f <Esc>:Konira file<CR>
         nmap <silent><Leader>c <Esc>:Konira describe<CR>
         nmap <silent><Leader>m <Esc>:Konira it<CR>
-        nmap <silent><Leader>,q <Esc>:Konira first<CR>
-        nmap <silent><Leader>,w <Esc>:Konira previous<CR>
-        nmap <silent><Leader>,e <Esc>:Konira next<CR>
-        nmap <silent><Leader>,r <Esc>:Konira last<CR>
+        nmap <silent><Leader>q <Esc>:Konira first<CR>
+        nmap <silent><Leader>w <Esc>:Konira previous<CR>
+        nmap <silent><Leader>e <Esc>:Konira next<CR>
+        nmap <silent><Leader>r <Esc>:Konira last<CR>
         nmap <silent><Leader>,f <Esc>:Konira fails<CR>
         nmap <silent><Leader>,d <Esc>:Konira error<CR>
         nmap <silent><Leader>,s <Esc>:Konira session<CR>
@@ -364,14 +398,13 @@ fun! s:SelectTestRunner()
       nmap <silent><Leader>f <Esc>:Pytest file<CR>
       nmap <silent><Leader>c <Esc>:Pytest class<CR>
       nmap <silent><Leader>m <Esc>:Pytest method<CR>
-      nmap <silent><Leader>,q <Esc>:Pytest first<CR>
-      nmap <silent><Leader>,w <Esc>:Pytest previous<CR>
-      nmap <silent><Leader>,e <Esc>:Pytest next<CR>
-      nmap <silent><Leader>,r <Esc>:Pytest last<CR>
+      nmap <silent><Leader>q <Esc>:Pytest first<CR>
+      nmap <silent><Leader>w <Esc>:Pytest previous<CR>
+      nmap <silent><Leader>e <Esc>:Pytest next<CR>
+      nmap <silent><Leader>r <Esc>:Pytest last<CR>
       nmap <silent><Leader>,f <Esc>:Pytest fails<CR>
       nmap <silent><Leader>,d <Esc>:Pytest error<CR>
       nmap <silent><Leader>,s <Esc>:Pytest session<CR>
       nmap <silent><Leader>,a <Esc>:Pytest end<CR>
 endfun
-
 

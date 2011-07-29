@@ -1,28 +1,28 @@
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Plugins_Included:
-"   > Pathogen.vim 
-"     Better Management of VIM plugins 
+"   > Pathogen.vim
+"     Better Management of VIM plugins
 "
-"   > Chapa.vim 
+"   > Chapa.vim
 "     Moves to, or visually selects, or toggles comments on the
 "     next/previous N function,method or class.
 "
 "   > GunDo.vim
 "     Visual Undo in vim with diff's to check the differences
 "
-"   > Pytest.vim 
+"   > Pytest.vim
 "     Runs your Python tests in Vim.
 "
-"   > Konira.vim 
+"   > Konira.vim
 "     Same as pytest.vim but for Konira-based files/tests
 "
 "   > Commant-T.vim
-"     Allows easy search and opening of files within a given path 
+"     Allows easy search and opening of files within a given path
 "
-"   > Snipmate.vim 
+"   > Snipmate.vim
 "     Configurable snippets to avoid re-typing common comands
 "
-"   > PyFlakes.vim 
+"   > PyFlakes.vim
 "     Underlines and displays errors with Python on-the-fly
 "
 "   > Plexer.vim
@@ -36,8 +36,8 @@ set nocompatible
 silent! call pathogen#runtime_append_all_bundles()
 silent! call pathogen#runtime_prepend_subdirectories("~/.vim/bundle")
 silent! call pathogen#helptags()
- 
-set nowritebackup                           " Hate backups
+
+set nowritebackup                           " Hate backups 
 set noswapfile                              " ...and swap files
 
 " DO NOT SET smartindent (left here as a reminder)
@@ -58,7 +58,7 @@ set background=dark
 
 " Regardless of the colorscheme I want
 " a magenta cursor
-hi Cursor guifg=black guibg=magenta          
+hi Cursor guifg=black guibg=magenta
 
 set guifont=Menlo:h14                        " Font and Font Size
 
@@ -67,13 +67,10 @@ set wrap
 set textwidth=79
 set formatoptions=qrn1
 
-" Remember cursor position
-au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
-
 syntax on                                  " always want syntax highlighting
 filetype on                                " enables filetype detection
 filetype plugin on                         " enables filetype specific plugins
-filetype indent on                         " respect filetype indentation 
+filetype indent on                         " respect filetype indentation
 
 set scrolloff=5                            " keep some more lines for scope
 
@@ -103,7 +100,7 @@ set smartcase
 " These will make it so that going to the next one in a
 " search will center on the line it's found in.
 map N Nzz
-map n nzz 
+map n nzz
 
 set mouse=n                                " Scrolling on the terminal
 set title                                  " Get the title right
@@ -121,11 +118,32 @@ set showcmd                                " Let me know what command I'm typing
 set cul                                    " Display a line to show current line
 set mousehide                              " When I go into insert mode, hide the mouse
 
+" display trailing whitespace
+set listchars=trail:-
+set list
+highlight SpecialKey term=standout ctermbg=white guibg=black
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Autocommands
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" Remember cursor position
+au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
+
+" Detect test files and apply according syntax
+autocmd BufNewFile,BufRead,BufEnter *.py call s:SelectTestRunner()
+
+" For xml, xhtml and html let's use 2 spaces of indentation
+autocmd FileType html,xhtml,xml setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2
+
+" Template Autodetection
+autocmd BufNewFile,BufRead *.mako,*.mak setlocal ft=html
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Movement Settings and Mappings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-" Jumping into arrow darkness with this 
+" Jumping into arrow darkness with this
 nnoremap <down>  <nop>
 nnoremap <left>  <nop>
 nnoremap <right> <nop>
@@ -144,20 +162,8 @@ set virtualedit=block                      " follow the block in virtual block s
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Other Settings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set clipboard=unnamed               " copies y, yy, d, D, dd and other to the 
+set clipboard=unnamed               " copies y, yy, d, D, dd and other to the
                                     " system clipboard
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Filetype specific
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Detect test files and apply according syntax
-autocmd BufNewFile,BufRead,BufEnter *.py call s:SelectTestRunner()
-
-" For xml, xhtml and html let's use 2 spaces of indentation
-autocmd FileType html,xhtml,xml setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2
-
-" Template Autodetection
-autocmd BufNewFile,BufRead *.mako,*.mak setlocal ft=html
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Chapa Python Plugin
@@ -182,27 +188,27 @@ let g:ackhighlight = 1
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Custom Commands
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Vertical Split Buffer 
+" Vertical Split Buffer
 command -nargs=1 -complete=buffer Vbuffer call VerticalSplitBuffer(<f-args>)
 command -nargs=* Exe call Command(<q-args>)
 
-" Edit Vimrc 
+" Edit Vimrc
 command  Vimrc :e $MYVIMRC
 
-" Reload/Source vimrc 
+" Reload/Source vimrc
 command! Reload :so $MYVIMRC
 
-" Git commit add 
+" Git commit add
 command Gca call Gca()
 
 " Git commit add all
 command Gcall call Gcall()
 
-" Git Push 
+" Git Push
 command Gp exe 'Git push'
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Mappings 
+" => Mappings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " jj for quick escaping
 imap jk <ESC>
@@ -212,7 +218,7 @@ let mapleader   = ","
 let g:mapleader = ","
 
 " surround
-nmap siw" :call Surround("iw", '"')<CR> 
+nmap siw" :call Surround("iw", '"')<CR>
 nmap siW" :call Surround("iW", '"')<CR>
 nmap siw' :call Surround("iw", "'")<CR>
 nmap siW' :call Surround("iW", "'")<CR>
@@ -222,11 +228,11 @@ nmap siW` :call Surround("iW", '`')<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Leaders
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Underline Titles 
+" Underline Titles
 nnoremap <Leader>1 yypVr=
 nnoremap <Leader>2 yypVr-
 
-" Count current word 
+" Count current word
 nmap <Leader>w <Esc>:call Count(expand("<cword>"))<CR>
 
 " Plexer apply changes
@@ -239,7 +245,7 @@ nnoremap <Leader>,c <Esc>:Plexer clear<CR>
 nnoremap <Leader>u <ESC>:GundoToggle<CR>
 
 " Insert blank lines and stay in normal mode dude
-" blank line  below 
+" blank line  below
 nnoremap <Leader>l <ESC>:put =''<CR>
 
 " blank line  above
@@ -254,7 +260,7 @@ nnoremap <Leader>n <Esc>:call ToggleNumber()<CR>
 " add a Plexer mark
 nnoremap <Leader>,m <Esc>:Plexer add<CR>
 
-" toggle relative number 
+" toggle relative number
 nnoremap <Leader>r <Esc>:call ToggleRelativeNumber()<CR>
 
 " set hls / nohls
@@ -266,13 +272,13 @@ nnoremap <Leader>v  V`]
 " Toggle Vim logging
 nnoremap <Leader>,v <Esc>:call ToggleVerbose()<CR>
 
-" format xml 
+" format xml
 nmap <Leader>x <Esc>:call FormatXML()<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Functions
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" In certain situations, it allows you to echo something without 
+" In certain situations, it allows you to echo something without
 " having to hit Return again to do exec the command.
 function! Echo(msg)
   let x=&ruler | let y=&showcmd
@@ -299,11 +305,11 @@ function! Surround(remover, character)
     execute "normal! p"
     " append char:
     execute "normal! bea" . a:character
-    exe "normal " column . "|"    
+    exe "normal " column . "|"
 endfunction
-    
 
-" Vertical Split Buffer 
+
+" Vertical Split Buffer
 function! VerticalSplitBuffer(buffer)
     let split_command = "vert belowright sb " . a:buffer
     execute split_command
@@ -311,26 +317,26 @@ function! VerticalSplitBuffer(buffer)
     call Echo(split_command)
 endfunction
 
-" Toggle Number ON/OFF 
+" Toggle Number ON/OFF
 function! ToggleNumber()
     if &number
         set nonumber
         echo "set nonumber"
     else
-        set number 
+        set number
         echo "set number"
-    endif 
+    endif
 endfunction
 
-" Toggle Relative Number ON/OFF 
+" Toggle Relative Number ON/OFF
 function! ToggleRelativeNumber()
     if &relativenumber
         set norelativenumber
         echo "set norelativenumber"
     else
-        set relativenumber 
+        set relativenumber
         echo "set relativenumber"
-    endif 
+    endif
 endfunction
 
 " Toggle Highlight Searc ON / OFF
@@ -365,25 +371,19 @@ function! FormatXML()
     silent normal gg=G
 endfunction
 
-" To get nice CWD with ~ substitution
-"function! CurDir()
-"    let curdir = substitute(getcwd(), '/Users/alfredo', "~/", "g")
-"    return curdir
-"endfunction
-
-" If we have a local vimrc source it 
+" If we have a local vimrc source it
 if filereadable(expand("~/.vimrc.local"))
   source ~/.vimrc.local
 endif
 
-" Git commit add single file please 
+" Git commit add single file please
 function! Gca()
     let cwd = expand("%:p")
     exe 'Git add ' . cwd
     exe 'Gcommit'
 endfunction
 
-" Git commit add all changed files please 
+" Git commit add all changed files please
 function! Gcall()
     let cwd = expand("%:p")
     exe 'Git add .'

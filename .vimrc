@@ -35,23 +35,25 @@ set nocompatible
 " Pathogen needs to be first to init all plugins
 silent! call pathogen#runtime_append_all_bundles()
 silent! call pathogen#runtime_prepend_subdirectories("~/.vim/bundle")
+silent! call pathogen#helptags()
  
 set nowritebackup                           " Hate backups
 set noswapfile                              " ...and swap files
 
+" DO NOT SET smartindent (left here as a reminder)
 "set smartindent
 
 " Fixes Comenting hash indentation
-inoremap # X#
+inoremap # X<BS>#
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Display
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 colorscheme solarized                        " Color Theme
-let g:solarized_visibility='low'
+"let g:solarized_visibility='low'
 let g:solarized_termcolors=16                " Solarized with custom palette works best
                                              " with this option
-set background=dark                          " I have a dark terminal
+set background=dark
 
 
 " Regardless of the colorscheme I want
@@ -80,10 +82,10 @@ set vb
 
 " GUI Stuff
 if has("gui_running")
-  set go-=T                                 " No toolbar
-  set guioptions-=L                         " No scrollbar
+  set go-=T                                " No toolbar
+  set guioptions-=L                        " No scrollbar
   set guioptions-=r
-  set lines=999 columns=999                 " open as large as possible
+  set lines=999 columns=999                " open as large as possible
   highlight SpellBad term=underline gui=undercurl guisp=Orange
 endif
 
@@ -92,53 +94,52 @@ set ruler
 
 " A status bar that shows nice information
 set laststatus=2
-set statusline=%F%m%r%h\ %w\ \ CWD:\ %r%{CurDir()}%h\ \ \ Line:\ %l/%L:%c
+set statusline=%F%m%r%h\ %w\ \ cwd:\ %r%{getcwd()}%h\ \ \ Line:\ %l/%L:%c
 
 " Searching
 set ignorecase
 set smartcase
 
-" Search mappings: These will make it so that going to the next one in a
+" These will make it so that going to the next one in a
 " search will center on the line it's found in.
 map N Nzz
-map n nzz
+map n nzz 
 
-" Get the title right
-set title
+set mouse=n                                " Scrolling on the terminal
+set title                                  " Get the title right
 
-" Highlight search on
-set hlsearch
+set hlsearch                               " Highlight search on
 
-" Menus like bash/zsh
-set wildmode=list:longest,full
+set wildmode=list:longest,full             " Menus like bash/zsh
 set wildmenu
 
-" For xml, xhtml and html let's use 2 spaces of indentation
-autocmd FileType html,xhtml,xml setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2
+" insert completion
+set completeopt=menuone,longest,preview    " Completion that follows your typing
+set pumheight=6                            " Show 6 items at the most
 
-" Let me know what command I'm typing 
-set showcmd                             
+set showcmd                                " Let me know what command I'm typing
+set cul                                    " Display a line to show current line
+set mousehide                              " When I go into insert mode, hide the mouse
 
-" Display a line to show current line
-set cul
-
-" When I go into insert mode, hide the mouse
-set mousehide
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Movement Settings and Mappings
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " Jumping into arrow darkness with this 
-nnoremap <up> <nop>
-nnoremap <down> <nop>
-nnoremap <left> <nop>
+nnoremap <down>  <nop>
+nnoremap <left>  <nop>
 nnoremap <right> <nop>
-inoremap <up> <nop>
-inoremap <down> <nop>
-inoremap <left> <nop>
+inoremap <up>    <nop>
+inoremap <down>  <nop>
+inoremap <left>  <nop>
 inoremap <right> <nop>
 
 " move one line at a time regardless
 " of wrapping
 nnoremap j gj
 nnoremap k gk
+
+set virtualedit=block                      " follow the block in virtual block selections
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Other Settings
@@ -147,11 +148,16 @@ set clipboard=unnamed               " copies y, yy, d, D, dd and other to the
                                     " system clipboard
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Detect Filetype For Python Testing Tools
+" => Filetype specific
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Detect test files and apply according syntax
 autocmd BufNewFile,BufRead,BufEnter *.py call s:SelectTestRunner()
 
+" For xml, xhtml and html let's use 2 spaces of indentation
+autocmd FileType html,xhtml,xml setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2
+
+" Template Autodetection
+autocmd BufNewFile,BufRead *.mako,*.mak setlocal ft=html
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Chapa Python Plugin
@@ -174,12 +180,6 @@ let g:pyflakes_use_quickfix = 0
 let g:ackhighlight = 1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Template Autodetection
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-autocmd BufNewFile,BufRead *.mako,*.mak setlocal ft=html
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Custom Commands
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Vertical Split Buffer 
@@ -190,7 +190,7 @@ command -nargs=* Exe call Command(<q-args>)
 command  Vimrc :e $MYVIMRC
 
 " Reload/Source vimrc 
-command Reload :so $MYVIMRC
+command! Reload :so $MYVIMRC
 
 " Git commit add 
 command Gca call Gca()
@@ -208,14 +208,16 @@ command Gp exe 'Git push'
 imap jk <ESC>
 
 " Make sure we use a better leader key
-let mapleader = ","
+let mapleader   = ","
 let g:mapleader = ","
 
-" Autoclose brackets, parens and curly brackets
-imap ( ()<Esc>i
-imap [ []<Esc>i
-imap { {}<Esc>i
-
+" surround
+nmap siw" :call Surround("iw", '"')<CR> 
+nmap siW" :call Surround("iW", '"')<CR>
+nmap siw' :call Surround("iw", "'")<CR>
+nmap siW' :call Surround("iW", "'")<CR>
+nmap siw` :call Surround("iw", '`')<CR>
+nmap siW` :call Surround("iW", '`')<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Leaders
@@ -261,6 +263,9 @@ nnoremap <Leader>s <Esc>:call ToggleHLSearch()<CR>
 " visual select last paste
 nnoremap <Leader>v  V`]
 
+" Toggle Vim logging
+nnoremap <Leader>,v <Esc>:call ToggleVerbose()<CR>
+
 " format xml 
 nmap <Leader>x <Esc>:call FormatXML()<CR>
 
@@ -278,13 +283,28 @@ function! Echo(msg)
 endfun
 
 " Count number of occurances of a word
-function Count(word)
+function! Count(word)
     let count_word = "%s/" . a:word . "//gn"
     execute count_word
 endfunction
 
+" Replace the deleted text with surrounding char
+function! Surround(remover, character)
+    let column = col('.') + 1
+    " remove first
+    execute "normal! d" . a:remover
+    " add prefacing char:
+    execute "normal! i" . a:character
+    " paste the word
+    execute "normal! p"
+    " append char:
+    execute "normal! bea" . a:character
+    exe "normal " column . "|"    
+endfunction
+    
+
 " Vertical Split Buffer 
-function VerticalSplitBuffer(buffer)
+function! VerticalSplitBuffer(buffer)
     let split_command = "vert belowright sb " . a:buffer
     execute split_command
     execute 'wincmd p'
@@ -292,7 +312,7 @@ function VerticalSplitBuffer(buffer)
 endfunction
 
 " Toggle Number ON/OFF 
-function ToggleNumber()
+function! ToggleNumber()
     if &number
         set nonumber
         echo "set nonumber"
@@ -303,7 +323,7 @@ function ToggleNumber()
 endfunction
 
 " Toggle Relative Number ON/OFF 
-function ToggleRelativeNumber()
+function! ToggleRelativeNumber()
     if &relativenumber
         set norelativenumber
         echo "set norelativenumber"
@@ -314,7 +334,7 @@ function ToggleRelativeNumber()
 endfunction
 
 " Toggle Highlight Searc ON / OFF
-function ToggleHLSearch()
+function! ToggleHLSearch()
        if &hls
             set nohlsearch
             echo "set nohls"
@@ -325,7 +345,7 @@ function ToggleHLSearch()
 endfunction
 
 " Toggle Paste
-function TogglePaste()
+function! TogglePaste()
        if &paste
             set nopaste
             echo "set nopaste"
@@ -336,7 +356,7 @@ function TogglePaste()
 endfunction
 
 " Format XML
-function FormatXML()
+function! FormatXML()
     let ft = 'set filetype?'
     if ft == 'filetype='
       set filetype=xml " sometimes you might be just copy pasting
@@ -346,10 +366,10 @@ function FormatXML()
 endfunction
 
 " To get nice CWD with ~ substitution
-function! CurDir()
-        let curdir = substitute(getcwd(), '/Users/alfredo', "~/", "g")
-            return curdir
-        endfunction
+"function! CurDir()
+"    let curdir = substitute(getcwd(), '/Users/alfredo', "~/", "g")
+"    return curdir
+"endfunction
 
 " If we have a local vimrc source it 
 if filereadable(expand("~/.vimrc.local"))
@@ -369,6 +389,18 @@ function! Gcall()
     exe 'Git add .'
     exe 'Gcommit'
 endfunction
+
+" Toggle Verbosity In Vim
+function! ToggleVerbose()
+    if !&verbose
+        set verbosefile=~/vim_verbose.log
+        set verbose=15
+    else
+        set verbose=0
+        set verbosefile=
+    endif
+endfunction
+
 
 "" Check if we have a konira file
 fun! s:SelectTestRunner()

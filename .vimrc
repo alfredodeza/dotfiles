@@ -120,7 +120,6 @@ set mousehide                              " When I go into insert mode, hide th
 
 " display trailing whitespace
 set listchars=trail:-
-set list
 highlight SpecialKey term=standout ctermbg=white guibg=black
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -272,6 +271,9 @@ nnoremap <Leader>v  V`]
 " Toggle Vim logging
 nnoremap <Leader>,v <Esc>:call ToggleVerbose()<CR>
 
+" Toggle Show Whitespace
+nnoremap <silent><Leader>w <Esc>:call ShowWhiteSpace()<CR>
+
 " format xml
 nmap <Leader>x <Esc>:call FormatXML()<CR>
 
@@ -399,6 +401,11 @@ function! ToggleVerbose()
         set verbose=0
         set verbosefile=
     endif
+endfunction
+
+" Toggle Trailing Whitespace
+function! ShowWhiteSpace()
+    set list!
 endfunction
 
 

@@ -50,7 +50,7 @@ inoremap # X<BS>#
 " => Display
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 colorscheme solarized                        " Color Theme
-"let g:solarized_visibility='low'
+let g:solarized_contrast='high'
 let g:solarized_termcolors=16                " Solarized with custom palette works best
                                              " with this option
 set background=dark

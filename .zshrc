@@ -87,8 +87,7 @@ alias vimrc='vim ~/.vimrc'
 # SSH Aliases
 alias @vm="ssh cmg@localhost -p2222 -Y"
 
-# Env Aliases 
-alias @medley="cd /opt/devel/cms_dev/src/storyville/medley && source /opt/devel/cms_dev/bin/activate"
+source ~/.zshrc-private
 
 # I hate you LDAP completion of usernames
 zstyle ':completion:*' users {adeza,root,cmg}

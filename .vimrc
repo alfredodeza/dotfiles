@@ -37,7 +37,7 @@ silent! call pathogen#runtime_append_all_bundles()
 silent! call pathogen#runtime_prepend_subdirectories("~/.vim/bundle")
 silent! call pathogen#helptags()
 
-set nowritebackup                           " Hate backups 
+set nowritebackup                           " Hate backups
 set noswapfile                              " ...and swap files
 
 " DO NOT SET smartindent (left here as a reminder)
@@ -60,7 +60,6 @@ set background=dark
 " a magenta cursor
 hi Cursor guifg=black guibg=magenta
 
-set guifont=Menlo:h14                        " Font and Font Size
 
 " terminal width
 set wrap
@@ -79,6 +78,7 @@ set vb
 
 " GUI Stuff
 if has("gui_running")
+  set guifont=Ubuntu\ Mono:h14                        " Font and Font Size
   set go-=T                                " No toolbar
   set guioptions-=L                        " No scrollbar
   set guioptions-=r
@@ -102,7 +102,6 @@ set smartcase
 map N Nzz
 map n nzz
 
-set mouse=n                                " Scrolling on the terminal
 set title                                  " Get the title right
 
 set hlsearch                               " Highlight search on
@@ -363,6 +362,20 @@ function! TogglePaste()
        endif
 endfunction
 
+" Comment CSS
+function! CommentOut()
+    let orig_column = col('.')
+    let ft = 'set filetype?'
+    if ft == 'filetype=css'
+        exe "normal 0i/*\e"
+        exe "normal $a*/\e"
+    elseif ft == 'filetype=python'
+        exe "normal 0i#\e"
+    endif
+
+    exe "normal " column . "|"
+endfunction
+
 " Format XML
 function! FormatXML()
     let ft = 'set filetype?'
@@ -412,9 +425,9 @@ endfunction
 "" Check if we have a konira file
 fun! s:SelectTestRunner()
     let n = 1
-    while n < 10 && n < line("$")
+    while n < 30 && n < line("$")
       " check for konira
-      let encoding = '\v^#\s+coding:\s+konira'
+      let encoding = '\v^\s*describe\s+'
       if getline(n) =~ encoding
         " Pytest
         nmap <silent><Leader>f <Esc>:Konira file<CR>
@@ -447,3 +460,16 @@ fun! s:SelectTestRunner()
       nmap <silent><Leader>,a <Esc>:Pytest end<CR>
 endfun
 
+function! InsertTabWrapper()
+let col = col('.') - 1
+if !col || getline('.')[col - 1] !~ '\k'
+    return "\<tab>"
+else
+    return "\<c-p>"
+endif
+endfunction
+inoremap <tab> <c-r>=InsertTabWrapper()<cr>
+inoremap <s-tab> <c-n>
+
+
+command! -bang Ws let orig_line = line('.') | exe ((<bang>0)?":set hls!":":set hls") | silent! exe '/\s\+$' |  exe orig_line

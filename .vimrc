@@ -84,6 +84,8 @@ if has("gui_running")
   set guioptions-=r
   set lines=999 columns=999                " open as large as possible
   highlight SpellBad term=underline gui=undercurl guisp=Orange
+else
+    set mouse=n
 endif
 
 " Display line and column numbers
@@ -188,7 +190,6 @@ let g:ackhighlight = 1
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Vertical Split Buffer
 command -nargs=1 -complete=buffer Vbuffer call VerticalSplitBuffer(<f-args>)
-command -nargs=* Exe call Command(<q-args>)
 
 " Edit Vimrc
 command  Vimrc :e $MYVIMRC

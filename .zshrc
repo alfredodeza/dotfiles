@@ -3,7 +3,7 @@ export ZSH=$HOME/.oh-my-zsh
 
 # Set to the name theme to load.
 # Look in ~/.oh-my-zsh/themes/
-export ZSH_THEME="alfredo"
+#export ZSH_THEME="alfredo"
 
 # Set to this to use case-sensitive completion
 export CASE_SENSITIVE="true"
@@ -13,15 +13,20 @@ export DISABLE_AUTO_UPDATE="true"
 
 # Uncomment following line if you want to disable colors in ls
 # export DISABLE_LS_COLORS="true"
+ZSH_THEME_GIT_PROMPT_PREFIX=" on %{$fg[magenta]%}"
+ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%}"
+ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[green]%}!"
+ZSH_THEME_GIT_PROMPT_UNTRACKED="%{$fg[green]%}?"
+ZSH_THEME_GIT_PROMPT_CLEAN=""  
 
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(git django)
+plugins=(git django med pytest)
 
 source $ZSH/oh-my-zsh.sh
 
 # Customize to your needs...
-export PATH=$PATH:/usr/local/bin:/usr/local/mysql/bin:/Users/adeza/bin:/Users/alfredo/bin/google_appengine
+export PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/local/mysql/bin:/Users/adeza/bin:/Users/adeza/bin/google_appengine
 
 # source IP's and private shortcuts
 #source ~/.zsh_private
@@ -82,7 +87,7 @@ alias cls='clear; ls'
 alias Vimrc='mvim ~/.vimrc'
 alias vimrc='vim ~/.vimrc'
 
-#PROMPT="%{%n@mbp $fg[yellow]%}%~ %{$reset_color%}$ "
+PROMPT='%{$fg[cyan]%}%n@mac $(git_prompt_info) %{$fg[yellow]%}%~ %{$reset_color%}$ ' 
 
 # SSH Aliases
 alias @vm="ssh cmg@localhost -p2222 -Y"
@@ -92,3 +97,9 @@ source ~/.zshrc-private
 # I hate you LDAP completion of usernames
 zstyle ':completion:*' users {adeza,root,cmg}
 
+# Build/Compile Correctly
+export ARCHFLAGS="-arch i386 -arch x86_64"
+
+# CMG specific
+export DEVELDIR=/opt/devel
+export CMG_LOCAL_VIRTUALENV_VERSION=1

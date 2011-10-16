@@ -417,11 +417,6 @@ function! ToggleVerbose()
     endif
 endfunction
 
-" Toggle Trailing Whitespace
-function! ShowWhiteSpace()
-    set list!
-endfunction
-
 
 "" Check if we have a konira file
 fun! s:SelectTestRunner()
@@ -445,20 +440,20 @@ fun! s:SelectTestRunner()
         return
       endif
       let n = n + 1
-      endwhile
-      " If konira was not found then
-      " Pytest
-      nmap <silent><Leader>f <Esc>:Pytest file<CR>
-      nmap <silent><Leader>c <Esc>:Pytest class<CR>
-      nmap <silent><Leader>m <Esc>:Pytest method<CR>
-      nmap <silent><Leader>q <Esc>:Pytest first<CR>
-      nmap <silent><Leader>w <Esc>:Pytest previous<CR>
-      nmap <silent><Leader>e <Esc>:Pytest next<CR>
-      nmap <silent><Leader>r <Esc>:Pytest last<CR>
-      nmap <silent><Leader>,f <Esc>:Pytest fails<CR>
-      nmap <silent><Leader>,d <Esc>:Pytest error<CR>
-      nmap <silent><Leader>,s <Esc>:Pytest session<CR>
-      nmap <silent><Leader>,a <Esc>:Pytest end<CR>
+  endwhile
+  " If konira was not found then
+  " Pytest
+  nmap <silent><Leader>f <Esc>:Pytest file<CR>
+  nmap <silent><Leader>c <Esc>:Pytest class<CR>
+  nmap <silent><Leader>m <Esc>:Pytest method<CR>
+  nmap <silent><Leader>q <Esc>:Pytest first<CR>
+  nmap <silent><Leader>w <Esc>:Pytest previous<CR>
+  nmap <silent><Leader>e <Esc>:Pytest next<CR>
+  nmap <silent><Leader>r <Esc>:Pytest last<CR>
+  nmap <silent><Leader>,f <Esc>:Pytest fails<CR>
+  nmap <silent><Leader>,d <Esc>:Pytest error<CR>
+  nmap <silent><Leader>,s <Esc>:Pytest session<CR>
+  nmap <silent><Leader>,a <Esc>:Pytest end<CR>
 endfun
 
 function! InsertTabWrapper()

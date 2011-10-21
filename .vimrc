@@ -93,7 +93,25 @@ set ruler
 
 " A status bar that shows nice information
 set laststatus=2
-set statusline=%F%m%r%h\ %w\ \ cwd:\ %r%{getcwd()}%h\ \ \ Line:\ %l/%L:%c
+"set statusline=%F%m%r%h\ %w\ \ cwd:\ %r%{getcwd()}%h\ \ \ Line:\ %l/%L:%c
+"set statusline=%f
+set statusline=%-4{fugitive#statusline()}%*
+set statusline+=%F                           " absolute path
+set statusline+=%m                           " are you modified?
+set statusline+=%r                           " are you read only?
+set statusline+=%w                           " are we in a preview window
+set statusline+=\ \ \ cwd:                   " show me the 
+set statusline+=%r%{getcwd()}%h              " current working dir
+set statusline+=%=                           " Right align.
+set statusline+=%y                           " what the file type
+set statusline+=[                            " 
+set statusline+=\ Line:                      " 
+set statusline+=%3l/                         " Line number with padding
+set statusline+=%L                           " Total lines in the file
+set statusline+=:%2c                         " column number
+set statusline+=]                            "
+set statusline+=%#error#                     " set the highlight to error
+set statusline+=%{HasError()}                " let me know if pyflakes errs
 
 " Searching
 set ignorecase
@@ -456,16 +474,13 @@ fun! s:SelectTestRunner()
   nmap <silent><Leader>,a <Esc>:Pytest end<CR>
 endfun
 
-function! InsertTabWrapper()
-let col = col('.') - 1
-if !col || getline('.')[col - 1] !~ '\k'
-    return "\<tab>"
-else
-    return "\<c-p>"
-endif
+function! HasError()
+    if exists("g:pyflakes_has_errors")
+        if g:pyflakes_has_errors
+            return "fffuuu"
+        endif
+        return ""
+    endif
 endfunction
-inoremap <tab> <c-r>=InsertTabWrapper()<cr>
-inoremap <s-tab> <c-n>
-
 
 command! -bang Ws let orig_line = line('.') | exe ((<bang>0)?":set hls!":":set hls") | silent! exe '/\s\+$' |  exe orig_line

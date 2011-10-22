@@ -93,8 +93,7 @@ set ruler
 
 " A status bar that shows nice information
 set laststatus=2
-"set statusline=%F%m%r%h\ %w\ \ cwd:\ %r%{getcwd()}%h\ \ \ Line:\ %l/%L:%c
-"set statusline=%f
+
 set statusline=%-4{fugitive#statusline()}%*
 set statusline+=%F                           " absolute path
 set statusline+=%m                           " are you modified?
@@ -479,6 +478,8 @@ function! HasError()
         if g:pyflakes_has_errors
             return "fffuuu"
         endif
+        return ""
+    else
         return ""
     endif
 endfunction

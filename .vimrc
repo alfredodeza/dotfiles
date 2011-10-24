@@ -99,12 +99,12 @@ set statusline+=%F                           " absolute path
 set statusline+=%m                           " are you modified?
 set statusline+=%r                           " are you read only?
 set statusline+=%w                           " are we in a preview window
-set statusline+=\ \ \ cwd:                   " show me the 
+set statusline+=\ \ \ cwd:                   " show me the
 set statusline+=%r%{getcwd()}%h              " current working dir
 set statusline+=%=                           " Right align.
 set statusline+=%y                           " what the file type
-set statusline+=[                            " 
-set statusline+=\ Line:                      " 
+set statusline+=[                            "
+set statusline+=\ Line:                      "
 set statusline+=%3l/                         " Line number with padding
 set statusline+=%L                           " Total lines in the file
 set statusline+=:%2c                         " column number

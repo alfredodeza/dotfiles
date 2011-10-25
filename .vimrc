@@ -94,23 +94,24 @@ set ruler
 " A status bar that shows nice information
 set laststatus=2
 
-set statusline=%-4{fugitive#statusline()}%*
+" All status line
+set statusline=%#ErrorMsg#                   " set the highlight to error
+set statusline+=%{HasError()}                " let me know if pyflakes errs
+set statusline+=%*                           " switch back to normal status color
+set statusline+=%-4{fugitive#statusline()}%*
 set statusline+=%F                           " absolute path
 set statusline+=%m                           " are you modified?
 set statusline+=%r                           " are you read only?
 set statusline+=%w                           " are we in a preview window
 set statusline+=\ \ \ cwd:                   " show me the
 set statusline+=%r%{getcwd()}%h              " current working dir
-set statusline+=%=                           " Right align.
-set statusline+=%y                           " what the file type
+set statusline+=\ \ \ \ %y                   " what the file type
 set statusline+=[                            "
 set statusline+=\ Line:                      "
 set statusline+=%3l/                         " Line number with padding
 set statusline+=%L                           " Total lines in the file
 set statusline+=:%2c                         " column number
 set statusline+=]                            "
-set statusline+=%#error#                     " set the highlight to error
-set statusline+=%{HasError()}                " let me know if pyflakes errs
 
 " Searching
 set ignorecase

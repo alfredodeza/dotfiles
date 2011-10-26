@@ -19,9 +19,11 @@ ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[green]%}!"
 ZSH_THEME_GIT_PROMPT_UNTRACKED="%{$fg[green]%}?"
 ZSH_THEME_GIT_PROMPT_CLEAN=""  
 
+virtual_envs=(/Users/adeza/python /opt/devel /Users/alfredo/python)
+
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(git django med pytest)
+plugins=(git django med pytest python)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -65,17 +67,10 @@ ssh-copy-key() {
     ssh ${1} "echo `cat ~/.ssh/id_rsa.pub` >> ~/.ssh/authorized_keys"
 }
 
-activate() {
-    if [ -f bin/activate ]; then . bin/activate;
-    elif [ -f ../bin/activate ]; then . ../bin/activate;
-    elif [ -f ../../bin/activate ]; then . ../../bin/activate;
-    elif [ -f ../../../bin/activate ]; then . ../../../bin/activate;
-    fi
-}
 
 
 alias bitch='sudo '
-alias ....='cd ../../../'
+alias ls='gls --color=if-tty'
 
 export LESSOPEN="| /usr/local/bin/src-hilite-lesspipe.sh %s"
 export LESS=' -R '

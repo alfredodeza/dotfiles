@@ -98,13 +98,15 @@ set laststatus=2
 set statusline=%#ErrorMsg#                   " set the highlight to error
 set statusline+=%{HasError()}                " let me know if pyflakes errs
 set statusline+=%*                           " switch back to normal status color
-set statusline+=%-4{fugitive#statusline()}%*
-set statusline+=%F                           " absolute path
+set statusline+=%-4{fugitive#statusline()}%* " lame fugitive branch name
+set statusline+=%{Collapse(expand('%:p'))}   " absolute path truncated
 set statusline+=%m                           " are you modified?
 set statusline+=%r                           " are you read only?
+set statusline+=%h                           " is it a help file
 set statusline+=%w                           " are we in a preview window
 set statusline+=\ \ \ cwd:                   " show me the
-set statusline+=%r%{getcwd()}%h              " current working dir
+set statusline+=%{Collapse(getcwd())}        " current working dir truncated
+set statusline+=%=                           " right align
 set statusline+=\ \ \ \ %y                   " what the file type
 set statusline+=[                            "
 set statusline+=\ Line:                      "
@@ -484,5 +486,17 @@ function! HasError()
         return ""
     endif
 endfunction
+
+function! Collapse(string)
+    let threshold = 30
+    let total_length = len(a:string)
+    if total_length > threshold
+        let difference = total_length - threshold
+        return ' ...' . strpart(a:string, difference)
+    else
+        return a:string
+    endif
+endfunction
+
 
 command! -bang Ws let orig_line = line('.') | exe ((<bang>0)?":set hls!":":set hls") | silent! exe '/\s\+$' |  exe orig_line

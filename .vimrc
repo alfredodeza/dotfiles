@@ -33,9 +33,7 @@
 set nocompatible
 
 " Pathogen needs to be first to init all plugins
-silent! call pathogen#runtime_append_all_bundles()
-silent! call pathogen#runtime_prepend_subdirectories("~/.vim/bundle")
-silent! call pathogen#helptags()
+silent! call pathogen#infect()
 
 set nowritebackup                           " Hate backups
 set noswapfile                              " ...and swap files
@@ -105,7 +103,7 @@ set statusline+=%r                           " are you read only?
 set statusline+=%h                           " is it a help file
 set statusline+=%w                           " are we in a preview window
 set statusline+=\ \ \ cwd:                   " show me the
-set statusline+=%{Collapse(getcwd())}        " current working dir truncated
+set statusline+=%{Collapse(Getcwd())}        " current working dir truncated
 set statusline+=%=                           " right align
 set statusline+=\ \ \ \ %y                   " what the file type
 set statusline+=[                            "
@@ -498,5 +496,14 @@ function! Collapse(string)
     endif
 endfunction
 
+function! Getcwd()
+    let current_dir = getcwd()
+    let current_path = expand("%:p:h")
+    if current_dir == current_path
+        return "."
+    else
+        return current_dir
+    endif
+endfunction
 
 command! -bang Ws let orig_line = line('.') | exe ((<bang>0)?":set hls!":":set hls") | silent! exe '/\s\+$' |  exe orig_line

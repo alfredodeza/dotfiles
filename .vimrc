@@ -514,7 +514,7 @@ command! -bang Ws let orig_line = line('.') | exe ((<bang>0)?":set hls!":":set h
 
 autocmd BufWritePost,BufReadPost,BufNewFile,BufEnter * call s:SetGitModified()
 
-function! s:SetGitModified()
+function! s:SetGitModified() abort
   if !exists('b:git_dir')
     return ''
   endif
@@ -560,6 +560,9 @@ endfunction
 
 function! RepoHead()
   let path = FindGit('repo') . '/HEAD'
+  if ! filereadable(path)
+      return 'NoBranch'
+  endif
   let repo_name = ''
   let repo_line =  readfile(path)[0]
 

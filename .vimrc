@@ -53,11 +53,9 @@ let g:solarized_termcolors=16                " Solarized with custom palette wor
                                              " with this option
 set background=dark
 
-
 " Regardless of the colorscheme I want
 " a magenta cursor
 hi Cursor guifg=black guibg=magenta
-
 
 " terminal width
 set wrap
@@ -96,7 +94,7 @@ set laststatus=2
 set statusline=%#ErrorMsg#                   " set the highlight to error
 set statusline+=%{HasError()}                " let me know if pyflakes errs
 set statusline+=%*                           " switch back to normal status color
-set statusline+=%-4{fugitive#statusline()}%* " lame fugitive branch name
+set statusline+=%-4{GitStatusline()}%*       " give me a branch name (is modified?)
 set statusline+=%{Collapse(expand('%:p'))}   " absolute path truncated
 set statusline+=%m                           " are you modified?
 set statusline+=%r                           " are you read only?
@@ -507,3 +505,83 @@ function! Getcwd()
 endfunction
 
 command! -bang Ws let orig_line = line('.') | exe ((<bang>0)?":set hls!":":set hls") | silent! exe '/\s\+$' |  exe orig_line
+
+" This is utter retardation. I like Fugitive.vim but tpope does not
+" want to add customizable statusline support, so I have to add all 
+" of these just to conform to have something like [BRANCH*] where
+" the '*' is present if the branch is modified or not.
+" le sigh
+
+autocmd BufWritePost,BufReadPost,BufNewFile,BufEnter * call s:SetGitModified()
+
+function! s:SetGitModified()
+  if !exists('b:git_dir')
+    return ''
+  endif
+  let repo_name = RepoHead()
+  let modified = GitIsModified() ? '*' : ''
+  let b:git_statusline = '['.repo_name.modified.']'
+endfunction
+
+function! FindGit(type)
+    let found = finddir(".git", ".;")
+    if (found !~ '.git')
+        return ""
+    endif
+    " Return the actual directory where .coverage is found
+    if a:type == "dir"
+        return fnamemodify(found, ":h")
+    else
+        return found
+    endif
+endfunction
+
+function! GitIsModified()
+    let rvalue = 0
+    " First try to see if we actually have a .git dir
+    let has_git = FindGit('dir')
+    if (has_git == "")
+        return rvalue
+    else
+        let original_dir = getcwd()
+        " change dir to where coverage is
+        " and do all the magic we need
+        exe "cd " . has_git
+        let cmd = "git status -s 2> /dev/null"" 
+        let out = system(cmd)
+        if out != ""
+            let rvalue = 1
+        endif
+        " Finally get back to where we initially where
+        exe "cd " . original_dir
+        return rvalue
+    endif
+endfunction
+
+function! RepoHead()
+  let path = FindGit('repo') . '/HEAD'
+  let repo_name = ''
+  let repo_line =  readfile(path)[0]
+
+  if repo_line =~# '^ref: '
+    let repo_name .= substitute(repo_line, '\v^(.*)/','', '')
+  elseif repo_line =~# '^\x\{40\}$'
+    let repo_name .= repo_line[0:7]
+  endif
+  return repo_name
+endfunction
+
+function! GitStatusline()
+  " Note: Works just as long as fugitive is installed
+  " should remove the depedency
+  if exists('b:git_statusline')
+      return b:git_statusline
+  endif
+  if !exists('b:git_dir')
+      return ''
+  else
+      let repo_name = RepoHead()
+      return '['.repo_name.']'
+  endif
+  return ''
+endfunction

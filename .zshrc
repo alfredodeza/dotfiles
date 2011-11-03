@@ -11,14 +11,6 @@ export CASE_SENSITIVE="true"
 # Comment this out to disable weekly auto-update checks
 export DISABLE_AUTO_UPDATE="true"
 
-# Uncomment following line if you want to disable colors in ls
-# export DISABLE_LS_COLORS="true"
-ZSH_THEME_GIT_PROMPT_PREFIX=" on %{$fg[magenta]%}"
-ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%}"
-ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[green]%}!"
-ZSH_THEME_GIT_PROMPT_UNTRACKED="%{$fg[green]%}?"
-ZSH_THEME_GIT_PROMPT_CLEAN=""  
-
 virtual_envs=(/Users/adeza/python /opt/devel /Users/alfredo/python)
 
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
@@ -31,9 +23,9 @@ source $ZSH/oh-my-zsh.sh
 export PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/local/mysql/bin:/Users/adeza/bin:/Users/adeza/bin/google_appengine
 
 # source IP's and private shortcuts
-#source ~/.zsh_private
+source ~/.zshrc-private
 
-# I hate autocorrect 
+# I hate autocorrect
 unsetopt correctall
 
 zstyle ':completion:*' completer _complete _match _approximate
@@ -82,13 +74,6 @@ alias cls='clear; ls'
 alias Vimrc='mvim ~/.vimrc'
 alias vimrc='vim ~/.vimrc'
 
-PROMPT='%{$fg[cyan]%}%n@mac $(git_prompt_info) %{$fg[yellow]%}%~ %{$reset_color%}$ ' 
-
-# SSH Aliases
-alias @vm="ssh cmg@localhost -p2222 -Y"
-
-source ~/.zshrc-private
-
 # I hate you LDAP completion of usernames
 zstyle ':completion:*' users {adeza,root,cmg}
 
@@ -98,3 +83,28 @@ export ARCHFLAGS="-arch i386 -arch x86_64"
 # CMG specific
 export DEVELDIR=/opt/devel
 export CMG_LOCAL_VIRTUALENV_VERSION=1
+
+# if mode indicator wasn't setup by theme, define default
+if [[ "$MODE_INDICATOR" == "" ]]; then
+  NORMAL_MODE="%{$fg[yellow]%}n%{$reset_color%}"
+  INSERT_MODE="%{$fg[cyan]%}i%{$reset_color%}"
+fi
+
+function zle-line-init zle-keymap-select {
+ VIMODE="${${KEYMAP/vicmd/[$NORMAL_MODE]}/(main|viins)/[$INSERT_MODE]}"
+ zle reset-prompt
+}
+
+zle -N zle-line-init
+zle -N zle-keymap-select
+
+bindkey -v
+
+# Make sure Ctrl-R works
+bindkey '^R' history-incremental-search-backward
+
+# Make backspace work like vim
+bindkey '^?' backward-delete-char
+
+# Prompt
+PROMPT='%{$fg[cyan]%}%n@mac $(git_prompt_info)%{$fg[yellow]%}%~ %{$reset_color%}${VIMODE}$ '

@@ -106,5 +106,12 @@ bindkey '^R' history-incremental-search-backward
 # Make backspace work like vim
 bindkey '^?' backward-delete-char
 
+# When using arrows, match what I have already typed
+# for history search
+bindkey -M viins "\e[A" up-line-or-search    # Up arrow
+bindkey -M viins "\e[B" down-line-or-search  # Down arrow
+bindkey -M vicmd "k"    up-line-or-search
+bindkey -M vicmd "j"    up-line-or-search
+
 # Prompt
 PROMPT='%{$fg[cyan]%}%n@mac $(git_prompt_info)%{$fg[yellow]%}%~ %{$reset_color%}${VIMODE}$ '

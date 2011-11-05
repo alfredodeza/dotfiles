@@ -86,12 +86,12 @@ export CMG_LOCAL_VIRTUALENV_VERSION=1
 
 # if mode indicator wasn't setup by theme, define default
 if [[ "$MODE_INDICATOR" == "" ]]; then
-  NORMAL_MODE="%{$fg[yellow]%}n%{$reset_color%}"
-  INSERT_MODE="%{$fg[cyan]%}i%{$reset_color%}"
+  NORMAL_MODE="%{$fg[red]%}$%{$reset_color%}"
+  INSERT_MODE="$"
 fi
 
 function zle-line-init zle-keymap-select {
- VIMODE="${${KEYMAP/vicmd/[$NORMAL_MODE]}/(main|viins)/[$INSERT_MODE]}"
+ VIMODE="${${KEYMAP/vicmd/$NORMAL_MODE}/(main|viins)/$INSERT_MODE}"
  zle reset-prompt
 }
 
@@ -113,5 +113,10 @@ bindkey -M viins "\e[B" down-line-or-search  # Down arrow
 bindkey -M vicmd "k"    up-line-or-search
 bindkey -M vicmd "j"    up-line-or-search
 
+ZSH_THEME_GIT_PROMPT_PREFIX="(%{$fg[cyan]%}"
+ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%})"
+ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[red]%}*%{$reset_color%}"
+ZSH_THEME_GIT_PROMPT_CLEAN=""
+
 # Prompt
-PROMPT='%{$fg[cyan]%}%n@mac $(git_prompt_info)%{$fg[yellow]%}%~ %{$reset_color%}${VIMODE}$ '
+PROMPT='$(git_prompt_info)%{$fg[yellow]%}%~ %{$reset_color%}${VIMODE} '

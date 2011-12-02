@@ -108,15 +108,25 @@ bindkey '^?' backward-delete-char
 
 # When using arrows, match what I have already typed
 # for history search
-bindkey -M viins "\e[A" up-line-or-search    # Up arrow
-bindkey -M viins "\e[B" down-line-or-search  # Down arrow
+bindkey -M viins "\e[A" history-search-backward
+bindkey -M viins "\e[B" history-search-forward  # Down arrow
 bindkey -M vicmd "k"    up-line-or-search
 bindkey -M vicmd "j"    up-line-or-search
 
-ZSH_THEME_GIT_PROMPT_PREFIX="(%{$fg[cyan]%}"
-ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%})"
-ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[red]%}*%{$reset_color%}"
-ZSH_THEME_GIT_PROMPT_CLEAN=""
+ZSH_THEME_GIT_PROMPT_PREFIX="("
+ZSH_THEME_GIT_PROMPT_SUFFIX=")"
+ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg_bold[yellow]%}"
+ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg[green]%}"
 
-# Prompt
-PROMPT='$(git_prompt_info)%{$fg[yellow]%}%~ %{$reset_color%}${VIMODE} '
+# Load vcs_info
+autoload -Uz vcs_info
+setopt prompt_subst
+
+zstyle ':vcs_info:*' stagedstr '*'
+zstyle ':vcs_info:*' unstagedstr '*'
+zstyle ':vcs_info:*' formats '[%F{yellow}%b%u%F{reset}]'
+zstyle ':vcs_info:*' check-for-changes true
+zstyle ':vcs_info:*' enable git svn
+precmd () { vcs_info }
+
+PROMPT='${vcs_info_msg_0_}%{$fg[green]%} %30<..<${PWD/#$HOME/~}%<< %{$reset_color%}${VIMODE} '

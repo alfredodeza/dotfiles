@@ -50,11 +50,6 @@ alias ......="cd ../../../../.."
 # Function Time!
 #
 
-# change to python package directory
-cdp() {
-    cd $(python -c "import os.path as _, ${1}; print _.dirname(_.realpath(${1}.__file__))")
-}
-
 ssh-copy-key() {
     ssh ${1} "echo `cat ~/.ssh/id_rsa.pub` >> ~/.ssh/authorized_keys"
 }

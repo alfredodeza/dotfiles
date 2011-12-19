@@ -590,6 +590,10 @@ function! GitStatusline()
 endfunction
 
 function! ToggleMinimap()
+    " Want a 1000FT view of whatever you have in front of you?
+    " Are you looking at code that is waaaay longer than your screen?
+    " this function will do that for you in GUI interfaces. The mapping
+    " is set below to `m`
     if !has("gui_running")
         echohl ErrorMsg | echo "Not in GUI Vim." | echohl None
         return

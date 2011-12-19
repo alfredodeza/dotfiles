@@ -211,7 +211,7 @@ command -nargs=1 -complete=buffer Vbuffer call VerticalSplitBuffer(<f-args>)
 command  Vimrc :e $MYVIMRC
 
 " Reload/Source vimrc
-command! Reload :so $MYVIMRC
+command! Reload :so $MYVIMRC | :filetype detect
 
 " Git commit add
 command Gca call Gca()
@@ -507,7 +507,7 @@ endfunction
 command! -bang Ws let orig_line = line('.') | exe ((<bang>0)?":set hls!":":set hls") | silent! exe '/\s\+$' |  exe orig_line
 
 " This is utter retardation. I like Fugitive.vim but tpope does not
-" want to add customizable statusline support, so I have to add all 
+" want to add customizable statusline support, so I have to add all
 " of these just to conform to have something like [BRANCH*] where
 " the '*' is present if the branch is modified or not.
 " le sigh
@@ -547,7 +547,7 @@ function! GitIsModified()
         " change dir to where coverage is
         " and do all the magic we need
         exe "cd " . has_git
-        let cmd = "git status -s 2> /dev/null"" 
+        let cmd = "git status -s 2> /dev/null""
         let out = system(cmd)
         if out != ""
             let rvalue = 1
@@ -588,3 +588,39 @@ function! GitStatusline()
   endif
   return ''
 endfunction
+
+function! ToggleMinimap()
+    if !has("gui_running")
+        echohl ErrorMsg | echo "Not in GUI Vim." | echohl None
+        return
+    endif
+
+    if exists("s:isMini") && s:isMini == 0
+        let s:isMini = 1
+    else
+        let s:isMini = 0
+    end
+
+    if (s:isMini == 0)
+        " save current visible lines
+        let s:firstLine = line("w0")
+        let s:lastLine = line("w$")
+
+
+        " don't change window size
+        let c = &columns * 12
+        let l = &lines * 12
+        exe "set columns=" . c
+        exe "set lines=" . l
+
+        " make font small
+        set guifont=Menlo:h1
+
+    else
+        set guifont=Menlo:h12
+
+    endif
+endfunction
+
+command! ToggleMinimap call ToggleMinimap()
+nnoremap m :ToggleMinimap<CR>

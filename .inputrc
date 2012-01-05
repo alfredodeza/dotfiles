@@ -1,0 +1,14 @@
+set editing-mode vi
+set keymap vi
+set completion-ignore-case on
+set completion-query-items 30
+set show-all-if-ambiguous on
+set visible-stats on
+set blink-matching-paren on
+
+set keymap vi-command
+    "j": history-search-backward
+    "k": history-search-forward
+set keymap vi-insert
+    "\e[A": history-search-backward
+    "\e[B": history-search-forward

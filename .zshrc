@@ -20,7 +20,7 @@ plugins=(git django med pytest python)
 source $ZSH/oh-my-zsh.sh
 
 # Customize to your needs...
-export PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/local/mysql/bin:/Users/adeza/bin:/Users/adeza/bin/google_appengine
+export PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/local/mysql/bin:/Users/adeza/bin:/Users/adeza/bin/google_appengine:/usr/texbin
 
 # source IP's and private shortcuts
 source ~/.zshrc-private

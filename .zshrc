@@ -23,7 +23,9 @@ source $ZSH/oh-my-zsh.sh
 export PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/local/mysql/bin:/Users/adeza/bin:/Users/adeza/bin/google_appengine:/usr/texbin
 
 # source IP's and private shortcuts
-source ~/.zshrc-private
+if [[ -d ~/.zshrc-private ]]; then
+    source ~/.zshrc-private
+fi
 
 # I hate autocorrect
 unsetopt correctall

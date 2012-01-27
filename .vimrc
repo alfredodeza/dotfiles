@@ -74,7 +74,7 @@ set vb
 
 " GUI Stuff
 if has("gui_running")
-  set guifont=Ubuntu\ Mono:h14                        " Font and Font Size
+  set guifont=Ubuntu\ Mono:h14             " Font and Font Size
   set go-=T                                " No toolbar
   set guioptions-=L                        " No scrollbar
   set guioptions-=r
@@ -205,22 +205,22 @@ let g:ackhighlight = 1
 " => Custom Commands
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Vertical Split Buffer
-command -nargs=1 -complete=buffer Vbuffer call VerticalSplitBuffer(<f-args>)
+command! -nargs=1 -complete=buffer Vbuffer call VerticalSplitBuffer(<f-args>)
 
 " Edit Vimrc
-command  Vimrc :e $MYVIMRC
+command!  Vimrc :e $MYVIMRC
 
 " Reload/Source vimrc
-command! Reload :so $MYVIMRC | :filetype detect
+command! Reload :so $MYVIMRC | :filetype detect | :call Echo("re-sourced ~/.vimrc")
 
 " Git commit add
-command Gca call Gca()
+command! Gca call Gca()
 
 " Git commit add all
-command Gcall call Gcall()
+command! Gcall call Gcall()
 
 " Git Push
-command Gp exe 'Git push'
+command! Gp exe 'Git push'
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Mappings
@@ -233,12 +233,9 @@ let mapleader   = ","
 let g:mapleader = ","
 
 " surround
-nmap siw" :call Surround("iw", '"')<CR>
-nmap siW" :call Surround("iW", '"')<CR>
-nmap siw' :call Surround("iw", "'")<CR>
-nmap siW' :call Surround("iW", "'")<CR>
-nmap siw` :call Surround("iw", '`')<CR>
-nmap siW` :call Surround("iW", '`')<CR>
+nnoremap <silent> s :set opfunc=Surround<cr>g@
+vnoremap <silent> s :<c-u>call Surround(visualmode(), 1)<cr>
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Leaders
@@ -313,17 +310,33 @@ function! Count(word)
 endfunction
 
 " Replace the deleted text with surrounding char
-function! Surround(remover, character)
-    let column = col('.') + 1
-    " remove first
-    execute "normal! d" . a:remover
-    " add prefacing char:
-    execute "normal! i" . a:character
-    " paste the word
-    execute "normal! p"
-    " append char:
-    execute "normal! bea" . a:character
-    exe "normal " column . "|"
+" InputChar and Surround are my attempt at playing with
+" custom motions in Vim. This is not intended to replace
+" tpope's surround.vim which does 10K more things and better
+" For reference see: 
+" http://stackoverflow.com/questions/8994276/mapping-a-new-motion-in-vim-with-a-required-parameter
+function! InputChar()
+    let c = getchar()
+    let c = type(c) == type(0) ? nr2char(c) : c
+    return c
+endfunction
+
+function! Surround(vt, ...)
+    let s = InputChar()
+    if s =~ "\<esc>" || s =~ "\<c-c>"
+        return
+    endif
+    let [sl, sc] = getpos(a:0 ? "'<" : "'[")[1:2]
+    let [el, ec] = getpos(a:0 ? "'>" : "']")[1:2]
+    if a:vt == 'line' || a:vt == 'V'
+        call append(el, s)
+        call append(sl-1, s)
+    elseif a:vt == 'block' || a:vt == "\<c-v>"
+        exe sl.','.el 's/\%'.sc.'c\|\%'.ec.'c.\zs/\=s/g|norm!``'
+    else
+        exe el 's/\%'.ec.'c.\zs/\=s/|norm!``'
+        exe sl 's/\%'.sc.'c/\=s/|norm!``'
+    endif
 endfunction
 
 
@@ -626,5 +639,5 @@ function! ToggleMinimap()
     endif
 endfunction
 
-command! ToggleMinimap call ToggleMinimap()
-nnoremap m :ToggleMinimap<CR>
+command! Mini call ToggleMinimap()
+"nnoremap m :ToggleMinimap<CR>

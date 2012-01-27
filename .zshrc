@@ -59,7 +59,9 @@ ssh-copy-key() {
 
 
 alias bitch='sudo '
-alias ls='gls --color=if-tty'
+if [[ -e '/usr/local/bin/gls' ]]; then
+    alias ls='gls --color=if-tty'
+fi
 
 export LESSOPEN="| /usr/local/bin/src-hilite-lesspipe.sh %s"
 export LESS=' -R '

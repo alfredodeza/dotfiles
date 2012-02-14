@@ -38,8 +38,9 @@ silent! call pathogen#infect()
 set nowritebackup                           " Hate backups
 set noswapfile                              " ...and swap files
 
-" DO NOT SET smartindent (left here as a reminder)
-"set smartindent
+" setting smartindent is depracated and breaks stuff
+" unset it  regardless
+set nosmartindent
 
 " Fixes Comenting hash indentation
 inoremap # X<BS>#
@@ -85,7 +86,7 @@ else
 endif
 
 " Display line and column numbers
-set ruler
+set noruler
 
 " A status bar that shows nice information
 set laststatus=2
@@ -225,9 +226,6 @@ command! Gp exe 'Git push'
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Mappings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" jj for quick escaping
-imap jk <ESC>
-
 " Make sure we use a better leader key
 let mapleader   = ","
 let g:mapleader = ","
@@ -313,7 +311,7 @@ endfunction
 " InputChar and Surround are my attempt at playing with
 " custom motions in Vim. This is not intended to replace
 " tpope's surround.vim which does 10K more things and better
-" For reference see: 
+" For reference see
 " http://stackoverflow.com/questions/8994276/mapping-a-new-motion-in-vim-with-a-required-parameter
 function! InputChar()
     let c = getchar()

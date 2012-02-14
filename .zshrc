@@ -1,26 +1,18 @@
-# Path to your oh-my-zsh configuration.
-export ZSH=$HOME/.oh-my-zsh
-
-# Set to the name theme to load.
-# Look in ~/.oh-my-zsh/themes/
-#export ZSH_THEME="alfredo"
-
-# Set to this to use case-sensitive completion
-export CASE_SENSITIVE="true"
-
-# Comment this out to disable weekly auto-update checks
-export DISABLE_AUTO_UPDATE="true"
+# Before anything, we call compinit so completion works
+autoload -Uz compinit; compinit
 
 virtual_envs=(/Users/adeza/python /opt/devel /Users/alfredo/python)
 
-# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
-# Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(git django med pytest python)
+# at some point I should make something out of this
+#plugins=(git django med pytest python)
+# FIXME
+if [[ -e ~/.zsh ]]; then
+    source ~/.zsh/python/python.plugin.zsh
+    source ~/.zsh/pytest/pytest.plugin.zsh
+fi
 
-source $ZSH/oh-my-zsh.sh
-
-# Customize to your needs...
-export PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/local/mysql/bin:/Users/adeza/bin:/Users/adeza/bin/google_appengine:/usr/texbin
+# Get homebrew's path first and then other custom bits 
+export PATH=/usr/local/bin:$PATH:/usr/local/sbin:/usr/local/mysql/bin:/Users/adeza/bin:/Users/adeza/bin/google_appengine:/usr/texbin
 
 # source IP's and private shortcuts
 if [[ -e ~/.zshrc-private ]]; then
@@ -30,15 +22,26 @@ fi
 # I hate autocorrect
 unsetopt correctall
 
+# load me some colors please so I can use them later
+autoload -U colors && colors
+
+setopt auto_menu         # show completion menu on succesive tab press
+setopt complete_in_word
+setopt always_to_end
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+zstyle ':completion:*' list-colors ''
+zstyle ':completion:*:*:*:*:*' menu select
+zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;34=0=01'
+zstyle ':completion:*:*:*:*:processes' command "ps -u `whoami` -o pid,user,comm -w -w"
+
+# disable named-directories autocompletion
+zstyle ':completion:*:cd:*' tag-order local-directories directory-stack path-directories
+
 zstyle ':completion:*' completer _complete _match _approximate
 zstyle ':completion:*:functions' ignored-patterns '_*'
 zstyle ':completion:*:match:*' original only
 zstyle ':completion:*:approximate:*' max-errors 1 numeric
-zstyle -e ':completion:*:approximate:*' \
-        max-errors 'reply=($((($#PREFIX+$#SUFFIX)/3))numeric)'
-
-# go back!
-alias cdd='cd -'
+zstyle -e ':completion:*:approximate:*'  max-errors 'reply=($((($#PREFIX+$#SUFFIX)/3))numeric)'
 
 # cd aliases
 alias ..="cd .."
@@ -57,27 +60,27 @@ ssh-copy-key() {
 }
 
 
-
 alias bitch='sudo '
-if [[ -e '/usr/local/bin/gls' ]]; then
-    alias ls='gls --color=if-tty'
-fi
 
-export LESSOPEN="| /usr/local/bin/src-hilite-lesspipe.sh %s"
-export LESS=' -R '
+# make ls colors! regardless of the OS! fantastic!
+ls --color -d . &>/dev/null 2>&1 && alias ls='ls --color=if-tty' || alias ls='ls -G'
+
 
 alias pg='ps aux | grep -v grep | grep $1'
 alias pgi='ps aux | grep -v grep | grep -i $1'
 alias \:q='exit'
+alias \:Q='exit'
 alias cls='clear; ls'
 alias Vimrc='mvim ~/.vimrc'
 alias vimrc='vim ~/.vimrc'
+alias gst='git status'
 
 # I hate you LDAP completion of usernames
 zstyle ':completion:*' users {adeza,root,cmg}
 
-# Build/Compile Correctly
+# Build/Compile Correctly and faster
 export ARCHFLAGS="-arch i386 -arch x86_64"
+export MAKEOPTS="-j17"
 
 # CMG specific
 export DEVELDIR=/opt/devel
@@ -129,3 +132,4 @@ zstyle ':vcs_info:*' enable git svn
 precmd () { vcs_info }
 
 PROMPT='${vcs_info_msg_0_}%{$fg[green]%} %30<..<${PWD/#$HOME/~}%<< %{$reset_color%}${VIMODE} '
+

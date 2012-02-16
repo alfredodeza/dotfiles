@@ -11,7 +11,7 @@ if [[ -e ~/.zsh ]]; then
     source ~/.zsh/pytest/pytest.plugin.zsh
 fi
 
-# Get homebrew's path first and then other custom bits 
+# Get homebrew's path first and then other custom bits
 export PATH=/usr/local/bin:$PATH:/usr/local/sbin:/usr/local/mysql/bin:/Users/adeza/bin:/Users/adeza/bin/google_appengine:/usr/texbin
 
 # source IP's and private shortcuts
@@ -100,6 +100,14 @@ function zle-line-init zle-keymap-select {
 zle -N zle-line-init
 zle -N zle-keymap-select
 
+# If I am in a sub-shell from Vim, let me know
+# otherwise I keep forgetting
+if [ "$(env | grep VIM)" ]; then
+    FROM_VIM="%{$fg[red]%}[vim]%{$reset_color%}"
+    PS1="$PS1{$FROM_VIM}"
+fi
+
+
 bindkey -v
 
 # Make sure Ctrl-R works
@@ -131,5 +139,5 @@ zstyle ':vcs_info:*' check-for-changes true
 zstyle ':vcs_info:*' enable git svn
 precmd () { vcs_info }
 
-PROMPT='${vcs_info_msg_0_}%{$fg[green]%} %30<..<${PWD/#$HOME/~}%<< %{$reset_color%}${VIMODE} '
+PROMPT='${FROM_VIM}${vcs_info_msg_0_}%{$fg[green]%} %30<..<${PWD/#$HOME/~}%<< %{$reset_color%}${VIMODE} '
 

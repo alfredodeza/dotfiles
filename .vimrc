@@ -638,4 +638,3 @@ function! ToggleMinimap()
 endfunction
 
 command! Mini call ToggleMinimap()
-"nnoremap m :ToggleMinimap<CR>

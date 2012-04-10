@@ -11,6 +11,9 @@ if [[ -e ~/.zsh ]]; then
     source ~/.zsh/pytest/pytest.plugin.zsh
 fi
 
+# Cache time for uber fast completion
+zstyle ':completion:*' use-cache on
+
 # Get homebrew's path first and then other custom bits
 export PATH=/usr/local/bin:$PATH:/usr/local/sbin:/usr/local/mysql/bin:/Users/adeza/bin:/Users/adeza/bin/google_appengine:/usr/texbin
 
@@ -18,6 +21,12 @@ export PATH=/usr/local/bin:$PATH:/usr/local/sbin:/usr/local/mysql/bin:/Users/ade
 if [[ -e ~/.zshrc-private ]]; then
     source ~/.zshrc-private
 fi
+
+HISTFILE=$HOME/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
+setopt SHARE_HISTORY
+setopt APPEND_HISTORY
 
 # I hate autocorrect
 unsetopt correctall
@@ -79,17 +88,18 @@ alias gst='git status'
 zstyle ':completion:*' users {adeza,root,cmg}
 
 # Build/Compile Correctly and faster
-export ARCHFLAGS="-arch i386 -arch x86_64"
+export ARCHFLAGS="-arch x86_64"
 export MAKEOPTS="-j17"
 
 # CMG specific
 export DEVELDIR=/opt/devel
+export CMG_CONF=/opt/conf/fe1.json
 export CMG_LOCAL_VIRTUALENV_VERSION=1
 
 # if mode indicator wasn't setup by theme, define default
 if [[ "$MODE_INDICATOR" == "" ]]; then
-  NORMAL_MODE="%{$fg[red]%}$%{$reset_color%}"
-  INSERT_MODE="$"
+  NORMAL_MODE="%{$fg[red]%}ᓆ%{$reset_color%}"
+  INSERT_MODE="ᓆ"
 fi
 
 function zle-line-init zle-keymap-select {

@@ -25,8 +25,6 @@
 "   > PyFlakes.vim
 "     Underlines and displays errors with Python on-the-fly
 "
-"   > Plexer.vim
-"     Multi-line multi-edit to avoid repetitive editing
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -92,8 +90,6 @@ set noruler
 set laststatus=2
 
 " All status line
-set statusline=%#ErrorMsg#                   " set the highlight to error
-set statusline+=%{HasError()}                " let me know if pyflakes errs
 set statusline+=%*                           " switch back to normal status color
 set statusline+=%-4{GitStatusline()}%*       " give me a branch name (is modified?)
 set statusline+=%{Collapse(expand('%:p'))}   " absolute path truncated
@@ -153,8 +149,14 @@ autocmd BufNewFile,BufRead,BufEnter *.py call s:SelectTestRunner()
 " For xml, xhtml and html let's use 2 spaces of indentation
 autocmd FileType html,xhtml,xml setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2
 
+" For Makefilels let's use tabs
+autocmd FileType make setlocal shiftwidth=4 tabstop=4 softtabstop=4
+
 " Template Autodetection
 autocmd BufNewFile,BufRead *.mako,*.mak setlocal ft=html
+
+" JSON Syntax
+autocmd BufNewFile,BufRead *.json call jacinto#syntax()
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Movement Settings and Mappings
@@ -183,9 +185,17 @@ set clipboard=unnamed               " copies y, yy, d, D, dd and other to the
                                     " system clipboard
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Chapa Python Plugin
+" => Plugin specific options
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Chapa
 let g:chapa_default_mappings = 1
+
+" Syntastic
+let g:syntastic_check_on_open = 0
+let g:syntastic_enable_signs = 0
+
+" Complexity
+let g:complexity_always_on = 0
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Python
@@ -198,8 +208,7 @@ set tabstop=4 expandtab shiftwidth=4 softtabstop=4
 " hide some files and remove stupid help
 let g:netrw_list_hide='^\.,.\(pyc\|pyo\|o\)$'
 
-" Fix Pyflakes and QuickFix window usage
-let g:pyflakes_use_quickfix = 0
+" Let Ack highlight when I search
 let g:ackhighlight = 1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -223,6 +232,11 @@ command! Gcall call Gcall()
 " Git Push
 command! Gp exe 'Git push'
 
+" I really can't be bothered with these:
+cmap WQ wq
+cmap Wq wq
+cmap Q q
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Mappings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -245,12 +259,6 @@ nnoremap <Leader>2 yypVr-
 " Count current word
 nmap <Leader>w <Esc>:call Count(expand("<cword>"))<CR>
 
-" Plexer apply changes
-silent! nnoremap <Leader>a <Esc>:Plexer apply<CR>
-
-" Plexer clear
-nnoremap <Leader>,c <Esc>:Plexer clear<CR>
-
 " gundo
 nnoremap <Leader>u <ESC>:GundoToggle<CR>
 
@@ -266,9 +274,6 @@ nnoremap <Leader>p <Esc>:call TogglePaste()<CR>
 
 " toggle number
 nnoremap <Leader>n <Esc>:call ToggleNumber()<CR>
-
-" add a Plexer mark
-nnoremap <Leader>,m <Esc>:Plexer add<CR>
 
 " toggle relative number
 nnoremap <Leader>r <Esc>:call ToggleRelativeNumber()<CR>
@@ -483,17 +488,6 @@ fun! s:SelectTestRunner()
   nmap <silent><Leader>,a <Esc>:Pytest end<CR>
 endfun
 
-function! HasError()
-    if exists("g:pyflakes_has_errors")
-        if g:pyflakes_has_errors
-            return "fffuuu"
-        endif
-        return ""
-    else
-        return ""
-    endif
-endfunction
-
 function! Collapse(string)
     let threshold = 30
     let total_length = len(a:string)
@@ -638,3 +632,33 @@ function! ToggleMinimap()
 endfunction
 
 command! Mini call ToggleMinimap()
+
+function! s:Echo(msg, ...)
+    redraw!
+    let x=&ruler | let y=&showcmd
+    set noruler noshowcmd
+    if (a:0 == 1)
+        echo a:msg
+    else
+        echohl WarningMsg | echo a:msg | echohl None
+    endif
+
+    let &ruler=x | let &showcmd=y
+endfun
+
+
+function! Docstring()
+    let get_previous_line = getline(line('.')-1)
+    let split_args = split(split(get_previous_line, "(")[1], '):')
+    let args = split(split_args[0], ",")
+    for argument in args
+        if argument =~ "="
+            let strn_line = ":keyword " . argument . ": Description"
+            execute "o"
+            execute "normal a" . strn_line
+"        else
+"            echo "has no equal"
+"            normal "a" . ":" . "param " . argument . ":" . "Description of this keyword"
+        endif
+    endfor
+endfunction

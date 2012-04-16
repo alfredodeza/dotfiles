@@ -46,7 +46,7 @@ inoremap # X<BS>#
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Display
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-colorscheme solarized                        " Color Theme
+colorscheme solarized
 let g:solarized_contrast='high'
 let g:solarized_termcolors=16                " Solarized with custom palette works best
                                              " with this option
@@ -83,11 +83,9 @@ else
     set mouse=n
 endif
 
-" Display line and column numbers
-set noruler
-
 " A status bar that shows nice information
 set laststatus=2
+set encoding=utf-8
 
 " All status line
 set statusline+=%*                           " switch back to normal status color
@@ -97,8 +95,7 @@ set statusline+=%m                           " are you modified?
 set statusline+=%r                           " are you read only?
 set statusline+=%h                           " is it a help file
 set statusline+=%w                           " are we in a preview window
-set statusline+=\ \ \ cwd:                   " show me the
-set statusline+=%{Collapse(Getcwd())}        " current working dir truncated
+set statusline+=\ \ \ %{Collapse(Getcwd())}  " current working dir truncated
 set statusline+=%=                           " right align
 set statusline+=\ \ \ \ %y                   " what the file type
 set statusline+=[                            "
@@ -503,9 +500,9 @@ function! Getcwd()
     let current_dir = getcwd()
     let current_path = expand("%:p:h")
     if current_dir == current_path
-        return "."
+        return ""
     else
-        return current_dir
+        return "cwd: " .current_dir
     endif
 endfunction
 
@@ -528,7 +525,7 @@ function! s:SetGitModified() abort
   let b:git_statusline = '['.repo_name.modified.']'
 endfunction
 
-function! FindGit(type)
+function! FindGit(type) abort
     let found = finddir(".git", ".;")
     if (found !~ '.git')
         return ""
@@ -541,7 +538,7 @@ function! FindGit(type)
     endif
 endfunction
 
-function! GitIsModified()
+function! GitIsModified() abort
     let rvalue = 0
     " First try to see if we actually have a .git dir
     let has_git = FindGit('dir')
@@ -551,19 +548,22 @@ function! GitIsModified()
         let original_dir = getcwd()
         " change dir to where coverage is
         " and do all the magic we need
-        exe "cd " . has_git
-        let cmd = "git status -s 2> /dev/null""
-        let out = system(cmd)
-        if out != ""
-            let rvalue = 1
-        endif
-        " Finally get back to where we initially where
-        exe "cd " . original_dir
-        return rvalue
+        if original_dir
+            exe "cd " . has_git
+            let cmd = "git status -s 2> /dev/null""
+            let out = system(cmd)
+            if out != ""
+                let rvalue = 1
+            endif
+            " Finally get back to where we initially where
+            exe "cd " . original_dir
+            return rvalue
+        else
+            return ''
     endif
 endfunction
 
-function! RepoHead()
+function! RepoHead() abort
   let path = FindGit('repo') . '/HEAD'
   if ! filereadable(path)
       return 'NoBranch'
@@ -579,7 +579,7 @@ function! RepoHead()
   return repo_name
 endfunction
 
-function! GitStatusline()
+function! GitStatusline() abort
   " Note: Works just as long as fugitive is installed
   " should remove the depedency
   if exists('b:git_statusline')
@@ -598,7 +598,7 @@ function! ToggleMinimap()
     " Want a 1000FT view of whatever you have in front of you?
     " Are you looking at code that is waaaay longer than your screen?
     " this function will do that for you in GUI interfaces. The mapping
-    " is set below to `m`
+    " is set below to `:Mini`
     if !has("gui_running")
         echohl ErrorMsg | echo "Not in GUI Vim." | echohl None
         return
@@ -662,3 +662,25 @@ function! Docstring()
         endif
     endfor
 endfunction
+
+""" FocusMode
+function! ToggleFocusMode()
+  if (&foldcolumn != 12)
+    set laststatus=0
+    set numberwidth=10
+    set foldcolumn=12
+    set noruler
+    set nocursorline
+    hi FoldColumn ctermbg=none
+    hi LineNr ctermfg=0 ctermbg=none
+    hi NonText ctermfg=0
+  else
+    set laststatus=2
+    set numberwidth=4
+    set foldcolumn=0
+    set ruler
+    set cursorline
+    execute "colorscheme " . g:colors_name
+  endif
+endfunc
+command! Focus :call ToggleFocusMode()

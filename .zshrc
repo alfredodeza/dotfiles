@@ -117,7 +117,6 @@ if [ "$(env | grep VIM)" ]; then
     PS1="$PS1{$FROM_VIM}"
 fi
 
-
 bindkey -v
 
 # Make sure Ctrl-R works

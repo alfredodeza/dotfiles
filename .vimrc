@@ -284,9 +284,6 @@ nnoremap <Leader>v  V`]
 " Toggle Vim logging
 nnoremap <Leader>,v <Esc>:call ToggleVerbose()<CR>
 
-" Toggle Show Whitespace
-nnoremap <silent><Leader>w <Esc>:call ShowWhiteSpace()<CR>
-
 " format xml
 nmap <Leader>x <Esc>:call FormatXML()<CR>
 
@@ -507,6 +504,7 @@ function! Getcwd()
 endfunction
 
 command! -bang Ws let orig_line = line('.') | exe ((<bang>0)?":set hls!":":set hls") | silent! exe '/\s\+$' |  exe orig_line
+command! Trailing let orig_line = line('.') | exe ((<bang>0)?":set hls!":":set hls") | silent! exe '%s/\s\+$//g' |  exe orig_line
 
 " This is utter retardation. I like Fugitive.vim but tpope does not
 " want to add customizable statusline support, so I have to add all
@@ -665,16 +663,52 @@ endfunction
 
 """ FocusMode
 function! ToggleFocusMode()
-  if (&foldcolumn != 12)
+  let sidebar = SidebarSize()
+  if s:focus_is_on == 0
+      if winwidth(winnr()) <= 150
+          call Echo("Not enough space to focus")
+          return
+      endif
+    let s:focus_is_on = 1
     set laststatus=0
-    set numberwidth=10
     set foldcolumn=12
     set noruler
     set nocursorline
     hi FoldColumn ctermbg=none
     hi LineNr ctermfg=0 ctermbg=none
     hi NonText ctermfg=0
+    set nowrap
+    set nolinebreak
+
+    " Create the left sidebar
+    exec( "silent leftabove " . sidebar . "vsplit new" )
+    setlocal noma
+    setlocal nocursorline
+    setlocal nonumber
+    silent! setlocal norelativenumber
+    wincmd l
+    " Create the right sidebar
+    exec( "silent rightbelow " . sidebar . "vsplit new" )
+    setlocal noma
+    setlocal nocursorline
+    setlocal nonumber
+    silent! setlocal norelativenumber
+    wincmd h
+
+    let l:highlightbgcolor = "ctermbg=8"
+    let l:highlightfgbgcolor = "ctermfg=8" . " " . l:highlightbgcolor
+    exec("hi Normal " . l:highlightbgcolor )
+    exec("hi VertSplit " . l:highlightfgbgcolor )
+    exec("hi NonText " . l:highlightfgbgcolor )
+    exec("hi StatusLine " . l:highlightfgbgcolor )
+    exec("hi StatusLineNC " . l:highlightfgbgcolor )
+
   else
+     let s:focus_is_on = 0
+     wincmd l
+     close
+     wincmd h
+     close
     set laststatus=2
     set numberwidth=4
     set foldcolumn=0
@@ -682,5 +716,12 @@ function! ToggleFocusMode()
     set cursorline
     execute "colorscheme " . g:colors_name
   endif
+  echo ''
+
 endfunc
+let s:focus_is_on = 0
 command! Focus :call ToggleFocusMode()
+
+function! SidebarSize()
+    return (winwidth( winnr() ) - 102 ) / 2
+endfunction

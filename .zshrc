@@ -84,6 +84,11 @@ alias Vimrc='mvim ~/.vimrc'
 alias vimrc='vim ~/.vimrc'
 alias gst='git status'
 
+# you need vimpager instaled for this to work
+export PAGER=~/bin/vimpager
+alias less=$PAGER
+alias zless=$PAGER
+
 # I hate you LDAP completion of usernames
 zstyle ':completion:*' users {adeza,root,cmg}
 

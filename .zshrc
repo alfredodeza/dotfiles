@@ -52,6 +52,9 @@ zstyle ':completion:*:match:*' original only
 zstyle ':completion:*:approximate:*' max-errors 1 numeric
 zstyle -e ':completion:*:approximate:*'  max-errors 'reply=($((($#PREFIX+$#SUFFIX)/3))numeric)'
 
+# fix weird matching
+setopt nonomatch
+
 # cd aliases
 alias ..="cd .."
 alias ...="cd ../.."
@@ -85,9 +88,7 @@ alias vimrc='vim ~/.vimrc'
 alias gst='git status'
 
 # you need vimpager instaled for this to work
-export PAGER=~/bin/vimpager
-alias less=$PAGER
-alias zless=$PAGER
+alias man='PAGER=/usr/local/bin/vimpager man'
 
 # I hate you LDAP completion of usernames
 zstyle ':completion:*' users {adeza,root,cmg}

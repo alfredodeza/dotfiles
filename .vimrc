@@ -175,6 +175,9 @@ nnoremap k gk
 
 set virtualedit=block                      " follow the block in virtual block selections
 
+" bang bang to sudo save a file
+cmap w!! %!sudo tee > /dev/null %
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Other Settings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

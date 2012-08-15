@@ -3,16 +3,21 @@ autoload -Uz compinit; compinit
 
 virtual_envs=(/Users/adeza/python /opt/devel /Users/alfredo/python)
 
+zle_highlight=(region:standout special:standout suffix:bold isearch:underline)
+
+
 # at some point I should make something out of this
 #plugins=(git django med pytest python)
 # FIXME
 if [[ -e ~/.zsh ]]; then
     source ~/.zsh/python/python.plugin.zsh
     source ~/.zsh/pytest/pytest.plugin.zsh
+    source ~/.zsh/python/python.completion.zsh
 fi
 
 # Cache time for uber fast completion
 zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path ~/.zsh/cache
 
 # Get homebrew's path first and then other custom bits
 export PATH=/usr/local/bin:$PATH:/usr/local/sbin:/usr/local/mysql/bin:/Users/adeza/bin:/Users/adeza/bin/google_appengine:/usr/texbin
@@ -95,7 +100,8 @@ alias man='PAGER=/usr/local/bin/vimpager man'
 zstyle ':completion:*' users {adeza,root,cmg}
 
 # Build/Compile Correctly and faster
-export ARCHFLAGS="-arch x86_64"
+export ARCHFLAGS="-arch i386 -arch x86_64"
+#export ARCHFLAGS="-arch x86_64"
 export MAKEOPTS="-j17"
 
 # CMG specific
@@ -134,10 +140,12 @@ bindkey '^?' backward-delete-char
 
 # When using arrows, match what I have already typed
 # for history search
-bindkey -M viins "\e[A" history-search-backward
+#bindkey -M viins "\e[A" history-search-backward
+bindkey -M viins "\e[A" history-beginning-search-backward
 bindkey -M viins "\e[B" history-search-forward  # Down arrow
 bindkey -M vicmd "k"    up-line-or-search
 bindkey -M vicmd "j"    up-line-or-search
+bindkey -M viins "\e[Z" reverse-menu-complete
 
 ZSH_THEME_GIT_PROMPT_PREFIX="("
 ZSH_THEME_GIT_PROMPT_SUFFIX=")"
@@ -156,4 +164,3 @@ zstyle ':vcs_info:*' enable git svn
 precmd () { vcs_info }
 
 PROMPT='${FROM_VIM}${vcs_info_msg_0_}%{$fg[green]%} %30<..<${PWD/#$HOME/~}%<< %{$reset_color%}${VIMODE} '
-

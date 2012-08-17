@@ -46,15 +46,11 @@ inoremap # X<BS>#
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Display
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set background=dark
 colorscheme solarized
 let g:solarized_contrast='high'
 let g:solarized_termcolors=16                " Solarized with custom palette works best
                                              " with this option
-set background=dark
-
-" Regardless of the colorscheme I want
-" a magenta cursor
-hi Cursor guifg=black guibg=magenta
 
 " terminal width
 set wrap
@@ -89,7 +85,7 @@ set encoding=utf-8
 
 " All status line
 set statusline+=%*                           " switch back to normal status color
-set statusline+=%-4{GitStatusline()}%*       " give me a branch name (is modified?)
+set statusline+=%-4{bondsman#Bail()}%*       " give me a branch name (is modified?)
 set statusline+=%{Collapse(expand('%:p'))}   " absolute path truncated
 set statusline+=%m                           " are you modified?
 set statusline+=%r                           " are you read only?
@@ -122,7 +118,7 @@ set wildmode=list:longest,full             " Menus like bash/zsh
 set wildmenu
 
 " insert completion
-set completeopt=menuone,longest,preview    " Completion that follows your typing
+set completeopt=menuone,longest            " Completion that follows your typing
 set pumheight=6                            " Show 6 items at the most
 
 set showcmd                                " Let me know what command I'm typing
@@ -159,15 +155,6 @@ autocmd BufNewFile,BufRead *.json call jacinto#syntax()
 " => Movement Settings and Mappings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-" Jumping into arrow darkness with this
-nnoremap <down>  <nop>
-nnoremap <left>  <nop>
-nnoremap <right> <nop>
-inoremap <up>    <nop>
-inoremap <down>  <nop>
-inoremap <left>  <nop>
-inoremap <right> <nop>
-
 " move one line at a time regardless
 " of wrapping
 nnoremap j gj
@@ -181,8 +168,8 @@ cmap w!! %!sudo tee > /dev/null %
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Other Settings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set clipboard=unnamed               " copies y, yy, d, D, dd and other to the
-                                    " system clipboard
+set clipboard=unnamed                      " copies y, yy, d, D, dd and other to the
+                                           " system clipboard
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Plugin specific options
@@ -197,12 +184,14 @@ let g:syntastic_enable_signs = 0
 " Complexity
 let g:complexity_always_on = 0
 
+" Posero
+let g:posero_default_mappings = 1
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Python
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-autocmd BufRead,BufNewFile *.py syntax on
-autocmd BufRead,BufNewFile *.py set ai
-autocmd BufRead *.py set smartindent cinwords=if,elif,else,for,while,with,try,except,finally,def,class
+"autocmd BufRead,BufNewFile *.py syntax on
+"autocmd BufRead,BufNewFile *.py set ai
+"autocmd BufRead *.py set smartindent cinwords=if,elif,else,for,while,with,try,except,finally,def,class
 set tabstop=4 expandtab shiftwidth=4 softtabstop=4
 
 " hide some files and remove stupid help
@@ -506,8 +495,18 @@ function! Getcwd()
     endif
 endfunction
 
+" Whitespace ammo. Everything here is meant to aid in the whitespace
+" war. Always leaving the cursor where you left it and toggling hls
+" if needed.
+
+" Show me where the whitespace is
 command! -bang Ws let orig_line = line('.') | exe ((<bang>0)?":set hls!":":set hls") | silent! exe '/\s\+$' |  exe orig_line
-command! Trailing let orig_line = line('.') | exe ((<bang>0)?":set hls!":":set hls") | silent! exe '%s/\s\+$//g' |  exe orig_line
+
+" Remove all trailing whitespace
+command! Trailing let orig_line = line('.') | let orig_col = col('.') | exe ":set nohls" | silent! exe '%s/\s\+$//g' |  exe orig_line | exe "normal " .orig_col . "|"
+
+" Remove all trailing whitespace when you write a file
+autocmd BufWritePost * :Trailing
 
 " This is utter retardation. I like Fugitive.vim but tpope does not
 " want to add customizable statusline support, so I have to add all
@@ -516,6 +515,7 @@ command! Trailing let orig_line = line('.') | exe ((<bang>0)?":set hls!":":set h
 " le sigh
 
 autocmd BufWritePost,BufReadPost,BufNewFile,BufEnter * call s:SetGitModified()
+
 
 function! s:SetGitModified() abort
   if !exists('b:git_dir')
@@ -648,22 +648,6 @@ function! s:Echo(msg, ...)
 endfun
 
 
-function! Docstring()
-    let get_previous_line = getline(line('.')-1)
-    let split_args = split(split(get_previous_line, "(")[1], '):')
-    let args = split(split_args[0], ",")
-    for argument in args
-        if argument =~ "="
-            let strn_line = ":keyword " . argument . ": Description"
-            execute "o"
-            execute "normal a" . strn_line
-"        else
-"            echo "has no equal"
-"            normal "a" . ":" . "param " . argument . ":" . "Description of this keyword"
-        endif
-    endfor
-endfunction
-
 """ FocusMode
 function! ToggleFocusMode()
   let sidebar = SidebarSize()
@@ -674,12 +658,12 @@ function! ToggleFocusMode()
       endif
     let s:focus_is_on = 1
     set laststatus=0
-    set foldcolumn=12
+    "set foldcolumn=12
     set noruler
     set nocursorline
     hi FoldColumn ctermbg=none
-    hi LineNr ctermfg=0 ctermbg=none
-    hi NonText ctermfg=0
+    hi LineNr ctermfg=8 ctermbg=none
+    hi NonText ctermfg=8
     set nowrap
     set nolinebreak
 
@@ -698,14 +682,17 @@ function! ToggleFocusMode()
     silent! setlocal norelativenumber
     wincmd h
 
+    let cterm_colors = Blackout()
     let l:highlightbgcolor = "ctermbg=8"
     let l:highlightfgbgcolor = "ctermfg=8" . " " . l:highlightbgcolor
-    exec("hi Normal " . l:highlightbgcolor )
-    exec("hi VertSplit " . l:highlightfgbgcolor )
-    exec("hi NonText " . l:highlightfgbgcolor )
-    exec("hi StatusLine " . l:highlightfgbgcolor )
-    exec("hi StatusLineNC " . l:highlightfgbgcolor )
-
+    let l:ctermfg = cterm_colors[0]
+    let l:ctermbg = cterm_colors[1]
+    let l:no_color = "ctermfg=" . l:ctermbg ." ctermbg=" . l:ctermbg
+    exec("hi Normal " . "ctermfg=" .l:ctermfg )
+    exec("hi VertSplit " . l:no_color )
+    exec("hi NonText " . l:no_color )
+    exec("hi StatusLine " . l:no_color )
+    exec("hi StatusLineNC " . l:no_color )
   else
      let s:focus_is_on = 0
      wincmd l
@@ -728,3 +715,22 @@ command! Focus :call ToggleFocusMode()
 function! SidebarSize()
     return (winwidth( winnr() ) - 102 ) / 2
 endfunction
+
+function! Blackout()
+        redir => current | silent highlight Normal | redir END
+        let current = substitute(current, " xxx ","  ", "")
+        let ctermbg = matchlist(current, '\vctermbg\=(.*)')[1]
+        let ctermfg = matchlist(current, '\vctermfg\=(.*)')[1]
+        return [ctermfg, ctermbg]
+endfunction
+
+if has('persistent_undo')
+    " Save all undo files in a single location (less messy, more risky)...
+    set undodir=$HOME/tmp/.VIM_UNDO_FILES
+
+    " Save a lot of back-history...
+    set undolevels=5000
+
+    " Actually switch on persistent undo
+    set undofile
+endif

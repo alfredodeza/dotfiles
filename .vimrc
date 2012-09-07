@@ -165,6 +165,17 @@ set virtualedit=block                      " follow the block in virtual block s
 " bang bang to sudo save a file
 cmap w!! %!sudo tee > /dev/null %
 
+" It is so much fun to nuke these ones
+" that I am adding them back. No arrow keys!
+nnoremap <down>  <nop>
+nnoremap <left>  <nop>
+nnoremap <right> <nop>
+nnoremap <up>    <nop>
+inoremap <up>    <nop>
+inoremap <down>  <nop>
+inoremap <left>  <nop>
+inoremap <right> <nop>
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Other Settings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -362,8 +373,8 @@ endfunction
 " Toggle Highlight Searc ON / OFF
 function! ToggleHLSearch()
        if &hls
-            set nohlsearch
-            echo "set nohls"
+            exe ":nohlsearch"
+            echo "nohlsearch"
        else
             set hls
             echo "set hls"

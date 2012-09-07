@@ -140,9 +140,8 @@ bindkey '^?' backward-delete-char
 
 # When using arrows, match what I have already typed
 # for history search
-#bindkey -M viins "\e[A" history-search-backward
-bindkey -M viins "\e[A" history-beginning-search-backward
-bindkey -M viins "\e[B" history-search-forward  # Down arrow
+bindkey -M viins "\e[A" history-beginning-search-backward # Up arrow
+bindkey -M viins "\e[B" history-beginning-search-forward  # Down arrow
 bindkey -M vicmd "k"    up-line-or-search
 bindkey -M vicmd "j"    up-line-or-search
 bindkey -M viins "\e[Z" reverse-menu-complete
@@ -163,4 +162,4 @@ zstyle ':vcs_info:*' check-for-changes true
 zstyle ':vcs_info:*' enable git svn
 precmd () { vcs_info }
 
-PROMPT='${FROM_VIM}${vcs_info_msg_0_}%{$fg[green]%} %30<..<${PWD/#$HOME/~}%<< %{$reset_color%}${VIMODE} '
+PROMPT='${FROM_VIM}$(hostname -s)${vcs_info_msg_0_}%{$fg[green]%} %30<..<${PWD/#$HOME/~}%<< %{$reset_color%}${VIMODE} '

@@ -1,0 +1,18 @@
+[user]
+	name = Alfredo Deza
+	email = <alfredodeza@gmail.com>
+[color]
+	ui = true
+[branch]
+	autosetuprebase = always
+[push]
+	default = tracking
+[format]
+    pretty=format:%C(yellow)%h%Creset -%C(red)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset
+[init]
+	templatedir = ~/.git_template
+[alias]
+	ctags = !.git/hooks/ctags
+[merge]
+	tool = vimdiff
+	conflictstyle = diff3

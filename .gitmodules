@@ -7,3 +7,6 @@
 [submodule ".vim/bundle/chapa.vim"]
 	path = .vim/bundle/chapa.vim
 	url = git://github.com/alfredodeza/chapa.vim
+[submodule ".vim/bundle/khuno.vim"]
+	path = .vim/bundle/khuno.vim
+	url = https://github.com/alfredodeza/khuno.vim

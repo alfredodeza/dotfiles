@@ -1,7 +1,7 @@
 # Before anything, we call compinit so completion works
 autoload -Uz compinit; compinit
 
-virtual_envs=(/Users/adeza/python /opt/devel /Users/alfredo/python)
+virtual_envs=($HOME/python /opt/devel $HOME/python)
 
 zle_highlight=(region:standout special:standout suffix:bold isearch:underline)
 
@@ -9,22 +9,22 @@ zle_highlight=(region:standout special:standout suffix:bold isearch:underline)
 # at some point I should make something out of this
 #plugins=(git django med pytest python)
 # FIXME
-if [[ -e ~/.zsh ]]; then
-    source ~/.zsh/python/python.plugin.zsh
-    source ~/.zsh/pytest/pytest.plugin.zsh
-    source ~/.zsh/python/python.completion.zsh
+if [[ -e $HOME/.zsh ]]; then
+    source $HOME/.zsh/python/python.plugin.zsh
+    source $HOME/.zsh/pytest/pytest.plugin.zsh
+    source $HOME/.zsh/python/python.completion.zsh
 fi
 
 # Cache time for uber fast completion
 zstyle ':completion:*' use-cache on
-zstyle ':completion:*' cache-path ~/.zsh/cache
+zstyle ':completion:*' cache-path $HOME/.zsh/cache
 
 # Get homebrew's path first and then other custom bits
-export PATH=/usr/local/bin:$PATH:/usr/local/sbin:/usr/local/mysql/bin:/Users/adeza/bin:/Users/adeza/bin/google_appengine:/usr/texbin
+export PATH=/usr/local/bin:$PATH:/usr/local/sbin:/usr/local/mysql/bin:$HOME/bin:$HOME/bin/google_appengine:/usr/texbin
 
 # source IP's and private shortcuts
-if [[ -e ~/.zshrc-private ]]; then
-    source ~/.zshrc-private
+if [[ -e $HOME/.zshrc-private ]]; then
+    source $HOME/.zshrc-private
 fi
 
 HISTFILE=$HOME/.zsh_history

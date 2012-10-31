@@ -4,3 +4,6 @@
 [submodule ".vim/bundle/vim-fugitive"]
 	path = .vim/bundle/vim-fugitive
 	url = git://github.com/tpope/vim-fugitive
+[submodule ".vim/bundle/chapa.vim"]
+	path = .vim/bundle/chapa.vim
+	url = git://github.com/alfredodeza/chapa.vim

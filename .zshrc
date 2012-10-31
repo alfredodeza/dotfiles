@@ -157,9 +157,9 @@ setopt prompt_subst
 
 zstyle ':vcs_info:*' stagedstr '*'
 zstyle ':vcs_info:*' unstagedstr '*'
-zstyle ':vcs_info:*' formats '[%F{yellow}%b%u%F{reset}]'
+zstyle ':vcs_info:*' formats '[%F{yellow}%b%c%u%F{reset}]'
 zstyle ':vcs_info:*' check-for-changes true
-zstyle ':vcs_info:*' enable git svn
+zstyle ':vcs_info:*' enable git svn hg
 precmd () { vcs_info }
 
 PROMPT='${FROM_VIM}$(hostname -s)${vcs_info_msg_0_}%{$fg[green]%} %30<..<${PWD/#$HOME/~}%<< %{$reset_color%}${VIMODE} '

@@ -86,6 +86,9 @@ set encoding=utf-8
 " All status line
 set statusline+=%*                           " switch back to normal status color
 set statusline+=%-4{bondsman#Bail()}%*       " give me a branch name (is modified?)
+set statusline=%#ErrorMsg#                   " set the highlight to error
+set statusline+=%{khuno#Status('FUU')}%*       " give me a branch name (is modified?)
+set statusline+=%*                           " switch back to normal status color
 set statusline+=%{Collapse(expand('%:p'))}   " absolute path truncated
 set statusline+=%m                           " are you modified?
 set statusline+=%r                           " are you read only?
@@ -124,10 +127,7 @@ set pumheight=6                            " Show 6 items at the most
 set showcmd                                " Let me know what command I'm typing
 set cul                                    " Display a line to show current line
 set mousehide                              " When I go into insert mode, hide the mouse
-
-" display trailing whitespace
-set listchars=trail:-
-highlight SpecialKey term=standout ctermbg=white guibg=black
+set nocursorline                           " Don't highlight where the cursor is
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Autocommands
@@ -714,7 +714,6 @@ function! ToggleFocusMode()
     set numberwidth=4
     set foldcolumn=0
     set ruler
-    set cursorline
     execute "colorscheme " . g:colors_name
   endif
   echo ''

@@ -1,12 +1,18 @@
+[submodule ".vim/bundle/bondsman.vim"]
+	path = .vim/bundle/bondsman.vim
+    url=git@github.com:alfredodeza/bondsman.vim.git
 [submodule ".vim/bundle/pytest.vim"]
 	path = .vim/bundle/pytest.vim
-	url = git://github.com/alfredodeza/pytest.vim
-[submodule ".vim/bundle/vim-fugitive"]
-	path = .vim/bundle/vim-fugitive
-	url = git://github.com/tpope/vim-fugitive
+	url = git@github.com:alfredodeza/pytest.vim
 [submodule ".vim/bundle/chapa.vim"]
 	path = .vim/bundle/chapa.vim
 	url = git://github.com/alfredodeza/chapa.vim
 [submodule ".vim/bundle/khuno.vim"]
 	path = .vim/bundle/khuno.vim
-	url = https://github.com/alfredodeza/khuno.vim
+	url = git@github.com:alfredodeza/chapa.vim
+[submodule ".vim/bundle/fugitive.vim"]
+	path = .vim/bundle/fugitive.vim
+	url = git://github.com/tpope/vim-fugitive.git
+[submodule ".vim/bundle/snipmate.vim"]
+    path = .vim/bundle/snipmate.vim
+    url = git://github.com/garbas/vim-snipmate.git

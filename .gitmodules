@@ -10,3 +10,9 @@
 [submodule ".vim/bundle/snipmate.vim"]
     path = .vim/bundle/snipmate.vim
     url = git://github.com/garbas/vim-snipmate.git
+[submodule ".vim/bundle/khuno.vim"]
+	path = .vim/bundle/khuno.vim
+	url = git@github.com:alfredodeza/khuno.vim.git
+[submodule ".vim/bundle/chapa.vim"]
+	path = .vim/bundle/chapa.vim
+	url = git@github.com:alfredodeza/chapa.vim.git

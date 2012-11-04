@@ -69,12 +69,12 @@ set vb
 
 " GUI Stuff
 if has("gui_running")
-  set guifont=Ubuntu\ Mono:h14             " Font and Font Size
+  set guifont=Ubuntu\ Mono:h15             " Font and Font Size
   set go-=T                                " No toolbar
   set guioptions-=L                        " No scrollbar
   set guioptions-=r
   set lines=999 columns=999                " open as large as possible
-  highlight SpellBad term=underline gui=undercurl guisp=Orange
+  highlight SpellBad gui=undercurl guisp=Orange
 else
     set mouse=n
 endif

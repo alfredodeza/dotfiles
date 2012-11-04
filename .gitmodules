@@ -1,5 +1,5 @@
 [submodule ".vim/bundle/bondsman.vim"]
-	path = .vim/bundle/bondsman.vim
+    path = .vim/bundle/bondsman.vim
     url = git@github.com:alfredodeza/bondsman.vim.git
 [submodule ".vim/bundle/pytest.vim"]
 	path = .vim/bundle/pytest.vim

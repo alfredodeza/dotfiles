@@ -284,9 +284,6 @@ nnoremap <Leader>s <Esc>:call ToggleHLSearch()<CR>
 " visual select last paste
 nnoremap <Leader>v  V`]
 
-" Toggle Vim logging
-nnoremap <Leader>,v <Esc>:call ToggleVerbose()<CR>
-
 " format xml
 nmap <Leader>x <Esc>:call FormatXML()<CR>
 
@@ -435,43 +432,9 @@ function! Gcall()
     exe 'Gcommit'
 endfunction
 
-" Toggle Verbosity In Vim
-function! ToggleVerbose()
-    if !&verbose
-        set verbosefile=~/vim_verbose.log
-        set verbose=15
-    else
-        set verbose=0
-        set verbosefile=
-    endif
-endfunction
 
-
-"" Check if we have a konira file
+"" Set the right test runner mappings
 fun! s:SelectTestRunner()
-    let n = 1
-    while n < 30 && n < line("$")
-      " check for konira
-      let encoding = '\v^\s*describe\s+'
-      if getline(n) =~ encoding
-        " Pytest
-        nmap <silent><Leader>f <Esc>:Konira file<CR>
-        nmap <silent><Leader>c <Esc>:Konira describe<CR>
-        nmap <silent><Leader>m <Esc>:Konira it<CR>
-        nmap <silent><Leader>q <Esc>:Konira first<CR>
-        nmap <silent><Leader>w <Esc>:Konira previous<CR>
-        nmap <silent><Leader>e <Esc>:Konira next<CR>
-        nmap <silent><Leader>r <Esc>:Konira last<CR>
-        nmap <silent><Leader>,f <Esc>:Konira fails<CR>
-        nmap <silent><Leader>,d <Esc>:Konira error<CR>
-        nmap <silent><Leader>,s <Esc>:Konira session<CR>
-        nmap <silent><Leader>,a <Esc>:Konira end<CR>
-        return
-      endif
-      let n = n + 1
-  endwhile
-  " If konira was not found then
-  " Pytest
   nmap <silent><Leader>f <Esc>:Pytest file<CR>
   nmap <silent><Leader>c <Esc>:Pytest class<CR>
   nmap <silent><Leader>m <Esc>:Pytest method<CR>
@@ -485,6 +448,8 @@ fun! s:SelectTestRunner()
   nmap <silent><Leader>,a <Esc>:Pytest end<CR>
 endfun
 
+
+""" These functions are helpers for the statusline
 function! Collapse(string)
     let threshold = 30
     let total_length = len(a:string)
@@ -519,11 +484,9 @@ command! Trailing let orig_line = line('.') | let orig_col = col('.') | exe ":se
 " Remove all trailing whitespace when you write a file
 autocmd BufWritePost * :Trailing
 
-" This is utter retardation. I like Fugitive.vim but tpope does not
-" want to add customizable statusline support, so I have to add all
-" of these just to conform to have something like [BRANCH*] where
-" the '*' is present if the branch is modified or not.
-" le sigh
+" I like Fugitive.vim but tpope does not want to add customizable statusline
+" support, so I have to add all of these just to conform to have something like
+" [BRANCH*] where the '*' is present if the branch is modified or not.  le sigh
 
 autocmd BufWritePost,BufReadPost,BufNewFile,BufEnter * call s:SetGitModified()
 

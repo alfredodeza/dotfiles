@@ -19,3 +19,6 @@
 [submodule ".vim/bundle/ctrlp.vim"]
 	path = .vim/bundle/ctrlp.vim
 	url = git://github.com/kien/ctrlp.vim.git
+[submodule ".zsh-plugins"]
+	path = .zsh-plugins
+	url = git@github.com:alfredodeza/zsh-plugins.git

@@ -125,7 +125,6 @@ set completeopt=menuone,longest            " Completion that follows your typing
 set pumheight=6                            " Show 6 items at the most
 
 set showcmd                                " Let me know what command I'm typing
-set cul                                    " Display a line to show current line
 set mousehide                              " When I go into insert mode, hide the mouse
 set nocursorline                           " Don't highlight where the cursor is
 
@@ -150,6 +149,9 @@ autocmd BufNewFile,BufRead *.mako,*.mak setlocal ft=html
 
 " JSON Syntax
 autocmd BufNewFile,BufRead *.json call jacinto#syntax()
+
+" Python whitespace
+au FileType python setlocal tabstop=4 expandtab shiftwidth=4 softtabstop=4
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Movement Settings and Mappings
@@ -188,22 +190,11 @@ set clipboard=unnamed                      " copies y, yy, d, D, dd and other to
 " Chapa
 let g:chapa_default_mappings = 1
 
-" Syntastic
-let g:syntastic_check_on_open = 0
-let g:syntastic_enable_signs = 0
-
-" Complexity
-let g:complexity_always_on = 0
-
 " Posero
 let g:posero_default_mappings = 1
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Python
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"autocmd BufRead,BufNewFile *.py syntax on
-"autocmd BufRead,BufNewFile *.py set ai
-"autocmd BufRead *.py set smartindent cinwords=if,elif,else,for,while,with,try,except,finally,def,class
-set tabstop=4 expandtab shiftwidth=4 softtabstop=4
 
 " hide some files and remove stupid help
 let g:netrw_list_hide='^\.,.\(pyc\|pyo\|o\)$'
@@ -279,7 +270,7 @@ nnoremap <Leader>n <Esc>:call ToggleNumber()<CR>
 nnoremap <Leader>r <Esc>:call ToggleRelativeNumber()<CR>
 
 " set hls / nohls
-nnoremap <Leader>s <Esc>:call ToggleHLSearch()<CR>
+nnoremap <Leader>s <Esc>:set hls!<CR>
 
 " visual select last paste
 nnoremap <Leader>v  V`]
@@ -318,6 +309,7 @@ function! InputChar()
     return c
 endfunction
 
+
 function! Surround(vt, ...)
     let s = InputChar()
     if s =~ "\<esc>" || s =~ "\<c-c>"
@@ -345,6 +337,7 @@ function! VerticalSplitBuffer(buffer)
     call Echo(split_command)
 endfunction
 
+
 " Toggle Number ON/OFF
 function! ToggleNumber()
     if &number
@@ -355,6 +348,7 @@ function! ToggleNumber()
         echo "set number"
     endif
 endfunction
+
 
 " Toggle Relative Number ON/OFF
 function! ToggleRelativeNumber()
@@ -367,16 +361,6 @@ function! ToggleRelativeNumber()
     endif
 endfunction
 
-" Toggle Highlight Searc ON / OFF
-function! ToggleHLSearch()
-       if &hls
-            exe ":nohlsearch"
-            echo "nohlsearch"
-       else
-            set hls
-            echo "set hls"
-       endif
-endfunction
 
 " Toggle Paste
 function! TogglePaste()
@@ -389,19 +373,6 @@ function! TogglePaste()
        endif
 endfunction
 
-" Comment CSS
-function! CommentOut()
-    let orig_column = col('.')
-    let ft = 'set filetype?'
-    if ft == 'filetype=css'
-        exe "normal 0i/*\e"
-        exe "normal $a*/\e"
-    elseif ft == 'filetype=python'
-        exe "normal 0i#\e"
-    endif
-
-    exe "normal " column . "|"
-endfunction
 
 " Format XML
 function! FormatXML()

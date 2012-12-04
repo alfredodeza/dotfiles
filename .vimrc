@@ -69,7 +69,7 @@ set vb
 
 " GUI Stuff
 if has("gui_running")
-  set guifont=Ubuntu\ Mono:h15             " Font and Font Size
+  set guifont=Ubuntu\ Mono:h16             " Font and Font Size
   set go-=T                                " No toolbar
   set guioptions-=L                        " No scrollbar
   set guioptions-=r
@@ -87,7 +87,7 @@ set encoding=utf-8
 set statusline+=%*                           " switch back to normal status color
 set statusline+=%-4{bondsman#Bail()}%*       " give me a branch name (is modified?)
 set statusline=%#ErrorMsg#                   " set the highlight to error
-set statusline+=%{khuno#Status('FUU')}%*       " give me a branch name (is modified?)
+set statusline+=%{khuno#Status()}%*          " Tell me how many Flake errors I have
 set statusline+=%*                           " switch back to normal status color
 set statusline+=%{Collapse(expand('%:p'))}   " absolute path truncated
 set statusline+=%m                           " are you modified?
@@ -141,6 +141,9 @@ autocmd BufNewFile,BufRead,BufEnter *.py call s:SelectTestRunner()
 " For xml, xhtml and html let's use 2 spaces of indentation
 autocmd FileType html,xhtml,xml setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2
 
+" For VimL do 2 spaces as well
+autocmd FileType vim setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2
+
 " For Makefilels let's use tabs
 autocmd FileType make setlocal shiftwidth=4 tabstop=4 softtabstop=4
 
@@ -192,6 +195,8 @@ let g:chapa_default_mappings = 1
 
 " Posero
 let g:posero_default_mappings = 1
+
+set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*.pyc
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Python
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -260,8 +265,8 @@ nnoremap <Leader>l <ESC>:put =''<CR>
 " blank line  above
 nnoremap <Leader>,l <ESC>:put! =''<CR>
 
-" set paste no paste
-nnoremap <Leader>p <Esc>:call TogglePaste()<CR>
+" Ctrl-P
+nmap <Leader>p <Esc>:CtrlP<CR>
 
 " toggle number
 nnoremap <Leader>n <Esc>:call ToggleNumber()<CR>
@@ -453,7 +458,7 @@ command! -bang Ws let orig_line = line('.') | exe ((<bang>0)?":set hls!":":set h
 command! Trailing let orig_line = line('.') | let orig_col = col('.') | exe ":set nohls" | silent! exe '%s/\s\+$//g' |  exe orig_line | exe "normal " .orig_col . "|"
 
 " Remove all trailing whitespace when you write a file
-autocmd BufWritePost * :Trailing
+"autocmd BufWritePost * :Trailing
 
 " I like Fugitive.vim but tpope does not want to add customizable statusline
 " support, so I have to add all of these just to conform to have something like

@@ -108,6 +108,7 @@ export MAKEOPTS="-j17"
 export DEVELDIR=/opt/devel
 export CMG_CONF=/opt/conf/fe1.json
 export CMG_LOCAL_VIRTUALENV_VERSION=1
+export LESS=FRSXQ
 
 # if mode indicator wasn't setup by theme, define default
 if [[ "$MODE_INDICATOR" == "" ]]; then

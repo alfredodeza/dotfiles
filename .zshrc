@@ -9,10 +9,13 @@ zle_highlight=(region:standout special:standout suffix:bold isearch:underline)
 # at some point I should make something out of this
 #plugins=(git django med pytest python)
 # FIXME
+# XXX Seriously now. I will not add another thing
+# here until I fix this shit
 if [[ -e $HOME/.zsh ]]; then
     source $HOME/.zsh/python/python.plugin.zsh
     source $HOME/.zsh/pytest/pytest.plugin.zsh
     source $HOME/.zsh/python/python.completion.zsh
+    source $HOME/.zsh/zle_vi_visual.zsh
 fi
 
 # Cache time for uber fast completion

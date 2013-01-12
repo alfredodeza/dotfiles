@@ -15,7 +15,7 @@ if [[ -e $HOME/.zsh ]]; then
     source $HOME/.zsh/python/python.plugin.zsh
     source $HOME/.zsh/pytest/pytest.plugin.zsh
     source $HOME/.zsh/python/python.completion.zsh
-    source $HOME/.zsh/zle_vi_visual.zsh
+    source $HOME/.zsh/vi/zle_vi_visual.zsh
 fi
 
 # Cache time for uber fast completion

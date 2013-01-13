@@ -5,6 +5,7 @@ virtual_envs=($HOME/python /opt/devel $HOME/python)
 
 zle_highlight=(region:standout special:standout suffix:bold isearch:underline)
 
+export PIP_DOWNLOAD_CACHE=$HOME/.pip_cache
 
 # at some point I should make something out of this
 #plugins=(git django med pytest python)

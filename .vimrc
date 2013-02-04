@@ -69,7 +69,8 @@ set vb
 
 " GUI Stuff
 if has("gui_running")
-  set guifont=Ubuntu\ Mono:h16             " Font and Font Size
+  set guifont=Ubuntu\ Mono:h17             " Font and Font Size
+  highlight Statement gui=italic
   set go-=T                                " No toolbar
   set guioptions-=L                        " No scrollbar
   set guioptions-=r
@@ -127,6 +128,10 @@ set pumheight=6                            " Show 6 items at the most
 set showcmd                                " Let me know what command I'm typing
 set mousehide                              " When I go into insert mode, hide the mouse
 set nocursorline                           " Don't highlight where the cursor is
+set shellcmdflag=-c                       " Tell the shell it is OK not to be interactive
+
+" default to 4 spaces of indentation
+set tabstop=4 expandtab shiftwidth=4 softtabstop=4
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Autocommands
@@ -675,7 +680,7 @@ endfunction
 
 if has('persistent_undo')
     " Save all undo files in a single location (less messy, more risky)...
-    set undodir=$HOME/tmp/.VIM_UNDO_FILES
+    set undodir=$HOME/tmp/.vim_undo
 
     " Save a lot of back-history...
     set undolevels=5000
@@ -683,3 +688,38 @@ if has('persistent_undo')
     " Actually switch on persistent undo
     set undofile
 endif
+
+
+" Lets try out more Python integration
+function! PyModuleVersion(module)
+  let exec = "exec \'try: import pkg_resources; print pkg_resources.get_distribution(\\'" . a:module . "\\').version\\nexcept Exception, e: print \\'Not Found.\\'\'"
+  let command = 'python -c "' . exec . '"'
+  let out = system(command)
+  return substitute(out, '\n$', '', '')
+endfunction
+
+function! PyModulePath(module)
+  let exec = "exec \'try: import os.path as _, ". a:module . "; print _.dirname(_.realpath(" . a:module . ".__file__))\\nexcept Exception, e: print e\'"
+  let command = 'python -c "' . exec . '"'
+  let out = system(command)
+  return substitute(out, '\n$', '', '')
+endfunction
+
+function! PyCd(module)
+  let path = PyModulePath(a:module)
+  let command = "cd " . path
+  execute command
+  call s:Echo(command, 1)
+endfunction
+
+function! PyInfo(module)
+  let _path = PyModulePath(a:module)
+  let _version = PyModuleVersion(a:module)
+  echo "Python Module: " . a:module
+  echo "Version: " . _version
+  echo "Path: " . _path
+endfunction
+
+
+command! -nargs=1 Pcd call PyCd(<f-args>)
+command! -nargs=1 Pinfo call PyInfo(<f-args>)

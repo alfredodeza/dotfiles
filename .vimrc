@@ -48,7 +48,11 @@ inoremap # X<BS>#
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set background=dark
 colorscheme solarized
-let g:solarized_contrast='high'
+if has("gui_running")
+  let g:solarized_contrast='low'
+else
+  let g:solarized_contrast='high'
+endif
 let g:solarized_termcolors=16                " Solarized with custom palette works best
                                              " with this option
 
@@ -148,6 +152,9 @@ autocmd FileType html,xhtml,xml setlocal expandtab shiftwidth=2 tabstop=2 softta
 
 " For VimL do 2 spaces as well
 autocmd FileType vim setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2
+
+" Less should look like CSS, right?
+autocmd BufNewFile,BufRead *.less setlocal ft=css
 
 " For Makefilels let's use tabs
 autocmd FileType make setlocal shiftwidth=4 tabstop=4 softtabstop=4
@@ -463,7 +470,7 @@ command! -bang Ws let orig_line = line('.') | exe ((<bang>0)?":set hls!":":set h
 command! Trailing let orig_line = line('.') | let orig_col = col('.') | exe ":set nohls" | silent! exe '%s/\s\+$//g' |  exe orig_line | exe "normal " .orig_col . "|"
 
 " Remove all trailing whitespace when you write a file
-"autocmd BufWritePost * :Trailing
+autocmd BufWritePost * :Trailing
 
 " I like Fugitive.vim but tpope does not want to add customizable statusline
 " support, so I have to add all of these just to conform to have something like
@@ -689,18 +696,27 @@ if has('persistent_undo')
     set undofile
 endif
 
+function! WhichPython()
+  if exists('$VIRTUAL_ENV')
+    let _python = $VIRTUAL_ENV . "/bin/python"
+  else
+    let _python= "python"
+  endif
+  return _python
+endfunction
+
 
 " Lets try out more Python integration
 function! PyModuleVersion(module)
   let exec = "exec \'try: import pkg_resources; print pkg_resources.get_distribution(\\'" . a:module . "\\').version\\nexcept Exception, e: print \\'Not Found.\\'\'"
-  let command = 'python -c "' . exec . '"'
+  let command = WhichPython() . ' -c "' . exec . '"'
   let out = system(command)
   return substitute(out, '\n$', '', '')
 endfunction
 
 function! PyModulePath(module)
   let exec = "exec \'try: import os.path as _, ". a:module . "; print _.dirname(_.realpath(" . a:module . ".__file__))\\nexcept Exception, e: print e\'"
-  let command = 'python -c "' . exec . '"'
+  let command = WhichPython() . ' -c "' . exec . '"'
   let out = system(command)
   return substitute(out, '\n$', '', '')
 endfunction
@@ -723,3 +739,10 @@ endfunction
 
 command! -nargs=1 Pcd call PyCd(<f-args>)
 command! -nargs=1 Pinfo call PyInfo(<f-args>)
+
+
+function! PyVersion()
+  let out = system("python --version")
+  let major_version = get(matchlist(out, '\d'), 0, '2')
+  echo "This is Python version " . major_version
+endfunction

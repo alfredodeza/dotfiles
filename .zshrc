@@ -108,10 +108,6 @@ export ARCHFLAGS="-arch i386 -arch x86_64"
 #export ARCHFLAGS="-arch x86_64"
 export MAKEOPTS="-j17"
 
-# CMG specific
-export DEVELDIR=/opt/devel
-export CMG_CONF=/opt/conf/fe1.json
-export CMG_LOCAL_VIRTUALENV_VERSION=1
 export LESS=FRSXQ
 
 # if mode indicator wasn't setup by theme, define default

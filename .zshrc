@@ -110,6 +110,9 @@ export MAKEOPTS="-j17"
 
 export LESS=FRSXQ
 
+# Load PythonStartup File
+export PYTHONSTARTUP=$HOME/dotfiles/pythonstartup.py
+
 # if mode indicator wasn't setup by theme, define default
 if [[ "$MODE_INDICATOR" == "" ]]; then
   NORMAL_MODE="%{$fg[red]%}ᓆ%{$reset_color%}"
@@ -164,3 +167,5 @@ zstyle ':vcs_info:*' enable git svn hg
 precmd () { vcs_info }
 
 PROMPT='${FROM_VIM}$(hostname -s)${vcs_info_msg_0_}%{$fg[green]%} %30<..<${PWD/#$HOME/~}%<< %{$reset_color%}${VIMODE} '
+
+PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting

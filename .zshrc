@@ -26,6 +26,10 @@ zstyle ':completion:*' cache-path $HOME/.zsh/cache
 # Get homebrew's path first and then other custom bits
 export PATH=/usr/local/bin:$PATH:/usr/local/sbin:/usr/local/mysql/bin:$HOME/bin:$HOME/bin/google_appengine:/usr/texbin
 
+# Virtualenv stuff
+export WORKON_HOME=~/.virtualenvs
+source /usr/local/bin/virtualenvwrapper.sh
+
 # source IP's and private shortcuts
 if [[ -e $HOME/.zshrc-private ]]; then
     source $HOME/.zshrc-private
@@ -59,8 +63,13 @@ zstyle ':completion:*:cd:*' tag-order local-directories directory-stack path-dir
 zstyle ':completion:*' completer _complete _match _approximate
 zstyle ':completion:*:functions' ignored-patterns '_*'
 zstyle ':completion:*:match:*' original only
-zstyle ':completion:*:approximate:*' max-errors 1 numeric
+zstyle ':completion:*:approximate:*' max-errors 2 numeric
 zstyle -e ':completion:*:approximate:*'  max-errors 'reply=($((($#PREFIX+$#SUFFIX)/3))numeric)'
+
+# Partial color matching on TAB
+highlights='${PREFIX:+=(#bi)($PREFIX:t)(?)*==$color[blue]=$color[yellow]}':${(s.:.)LS_COLORS}}
+zstyle -e ':completion:*' list-colors 'reply=( "'$highlights'" )'
+unset highlights
 
 # fix weird matching
 setopt nonomatch
@@ -96,9 +105,6 @@ alias cls='clear; ls'
 alias Vimrc='mvim ~/.vimrc'
 alias vimrc='vim ~/.vimrc'
 alias gst='git status'
-
-# you need vimpager instaled for this to work
-alias man='PAGER=/usr/local/bin/vimpager man'
 
 # I hate you LDAP completion of usernames
 zstyle ':completion:*' users {adeza,root,cmg}

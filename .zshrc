@@ -67,8 +67,9 @@ zstyle ':completion:*:approximate:*' max-errors 2 numeric
 zstyle -e ':completion:*:approximate:*'  max-errors 'reply=($((($#PREFIX+$#SUFFIX)/3))numeric)'
 
 # Partial color matching on TAB
-highlights='${PREFIX:+=(#bi)($PREFIX:t)(?)*==$color[blue]=$color[yellow]}':${(s.:.)LS_COLORS}}
+highlights='${PREFIX:+=(#bi)($PREFIX:t)(?)*==$color[blue]=00}':${(s.:.)LS_COLORS}}
 zstyle -e ':completion:*' list-colors 'reply=( "'$highlights'" )'
+zstyle -e ':completion:*:-command-:*:commands' list-colors 'reply=( "'$highlights'" )'
 unset highlights
 
 # fix weird matching

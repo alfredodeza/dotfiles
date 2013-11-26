@@ -41,6 +41,26 @@ SAVEHIST=10000
 setopt SHARE_HISTORY
 setopt APPEND_HISTORY
 
+# Remember previous directories
+DIRSTACKSIZE=20
+DIRSTACKFILE=$HOME/.zdirs
+if [[ -f $DIRSTACKFILE ]] && [[ $#dirstack -eq 0 ]]; then
+  dirstack=( ${(f)"$(< $DIRSTACKFILE)"} )
+  [[ -d $dirstack[1] ]] && cd $dirstack[1]
+fi
+chpwd() {
+  print -l $PWD ${(u)dirstack} >$DIRSTACKFILE
+}
+
+
+setopt autopushd pushdsilent pushdtohome
+
+## Remove duplicate entries
+setopt pushdignoredups
+
+## This reverts the +/- operators.
+setopt pushdminus
+
 # I hate autocorrect
 unsetopt correctall
 

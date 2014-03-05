@@ -1,6 +1,6 @@
 [user]
 	name = Alfredo Deza
-	email = <alfredodeza@gmail.com>
+	email = <alfredo@deza.pe>
 [color]
 	ui = true
 [branch]
@@ -13,6 +13,7 @@
 	templatedir = ~/.git_template
 [alias]
 	ctags = !.git/hooks/ctags
+	workprofile = config user.email \"alfredo.deza@inktank.com\"
 [merge]
-	tool = vimdiff
+    tool = vimdiff
 	conflictstyle = diff3

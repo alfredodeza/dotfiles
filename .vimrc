@@ -47,14 +47,15 @@ inoremap # X<BS>#
 " => Display
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set background=dark
-colorscheme solarized
 if has("gui_running")
   let g:solarized_contrast='low'
 else
   let g:solarized_contrast='high'
+  let g:solarized_termtrans = 1
 endif
-let g:solarized_termcolors=16                " Solarized with custom palette works best
-                                             " with this option
+
+colorscheme tomorrow-night
+
 
 " terminal width
 set wrap
@@ -75,6 +76,7 @@ set vb
 if has("gui_running")
   set guifont=Ubuntu\ Mono:h17             " Font and Font Size
   highlight Statement gui=italic
+  highlight pythonStatement gui=italic
   set go-=T                                " No toolbar
   set guioptions-=L                        " No scrollbar
   set guioptions-=r
@@ -148,7 +150,8 @@ au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g
 autocmd BufNewFile,BufRead,BufEnter *.py call s:SelectTestRunner()
 
 " For xml, xhtml and html let's use 2 spaces of indentation
-autocmd FileType html,xhtml,xml setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2
+autocmd FileType html,xhtml,xml,yaml,yml setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2
+autocmd FileType html call s:SelectSyntax()
 
 " For VimL do 2 spaces as well
 autocmd FileType vim setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2
@@ -435,7 +438,6 @@ fun! s:SelectTestRunner()
   nmap <silent><Leader>,s <Esc>:Pytest session<CR>
   nmap <silent><Leader>,a <Esc>:Pytest end<CR>
 endfun
-
 
 """ These functions are helpers for the statusline
 function! Collapse(string)

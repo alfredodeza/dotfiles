@@ -1,9 +1,9 @@
 [submodule ".vim/bundle/bondsman.vim"]
     path = .vim/bundle/bondsman.vim
-    url = git://github.com:alfredodeza/bondsman.vim.git
+    url = git://github.com/alfredodeza/bondsman.vim
 [submodule ".vim/bundle/pytest.vim"]
 	path = .vim/bundle/pytest.vim
-	url = git://github.com:alfredodeza/pytest.vim
+	url = git://github.com/alfredodeza/pytest.vim
 [submodule ".vim/bundle/fugitive.vim"]
 	path = .vim/bundle/fugitive.vim
 	url = git://github.com/tpope/vim-fugitive.git
@@ -12,13 +12,13 @@
     url = git://github.com/garbas/vim-snipmate.git
 [submodule ".vim/bundle/khuno.vim"]
 	path = .vim/bundle/khuno.vim
-	url = git://github.com:alfredodeza/khuno.vim.git
+	url = git://github.com/alfredodeza/khuno.vim
 [submodule ".vim/bundle/chapa.vim"]
 	path = .vim/bundle/chapa.vim
-	url = git://ithub.com:alfredodeza/chapa.vim.git
+	url = git://github.com/alfredodeza/chapa.vim
 [submodule ".vim/bundle/ctrlp.vim"]
 	path = .vim/bundle/ctrlp.vim
 	url = git://github.com/kien/ctrlp.vim.git
 [submodule ".zsh-plugins"]
 	path = .zsh-plugins
-	url = git://github.com:alfredodeza/zsh-plugins.git
+	url = git://github.com/alfredodeza/zsh-plugins.git

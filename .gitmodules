@@ -15,7 +15,7 @@
 	url = git://github.com:alfredodeza/khuno.vim.git
 [submodule ".vim/bundle/chapa.vim"]
 	path = .vim/bundle/chapa.vim
-	url = git@://ithub.com:alfredodeza/chapa.vim.git
+	url = git://ithub.com:alfredodeza/chapa.vim.git
 [submodule ".vim/bundle/ctrlp.vim"]
 	path = .vim/bundle/ctrlp.vim
 	url = git://github.com/kien/ctrlp.vim.git

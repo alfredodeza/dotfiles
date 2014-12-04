@@ -1,7 +1,8 @@
 # Before anything, we call compinit so completion works
 autoload -Uz compinit; compinit
 
-virtual_envs=($HOME/python /opt/devel $HOME/python)
+virtual_envs=($HOME/python $HOME/.virtualenvs)
+virtualenvshome="$HOME/.virtualenvs"
 
 zle_highlight=(region:standout special:standout suffix:bold isearch:underline)
 
@@ -17,6 +18,7 @@ if [[ -e $HOME/.zsh ]]; then
     source $HOME/.zsh/pytest/pytest.plugin.zsh
     source $HOME/.zsh/python/python.completion.zsh
     source $HOME/.zsh/vi/zle_vi_visual.zsh
+    source $HOME/.zsh/opp.zsh
 fi
 
 # Cache time for uber fast completion
@@ -26,9 +28,9 @@ zstyle ':completion:*' cache-path $HOME/.zsh/cache
 # Get homebrew's path first and then other custom bits
 export PATH=/usr/local/bin:$PATH:/usr/local/sbin:/usr/local/mysql/bin:$HOME/bin:$HOME/bin/google_appengine:/usr/texbin
 
-# Virtualenv stuff
-export WORKON_HOME=~/.virtualenvs
-source /usr/local/bin/virtualenvwrapper.sh
+# By default, zsh delays 'Esc' to get into normal mode by half
+# a second. Reduce this to 0.1s
+export KEYTIMEOUT=1
 
 # source IP's and private shortcuts
 if [[ -e $HOME/.zshrc-private ]]; then
@@ -108,7 +110,13 @@ alias ......="cd ../../../../.."
 #
 
 ssh-copy-key() {
-    ssh ${1} "echo `cat ~/.ssh/id_rsa.pub` >> ~/.ssh/authorized_keys"
+    if [ $2 ]; then
+        key=$2
+    else
+        key="~/.ssh/id_rsa.pub"
+    fi
+
+    ssh ${1} "echo `cat $key` >> ~/.ssh/authorized_keys"
 }
 
 
@@ -139,6 +147,8 @@ export LESS=FRSXQ
 
 # Load PythonStartup File
 export PYTHONSTARTUP=$HOME/dotfiles/pythonstartup.py
+
+export EDITOR=`which vim`
 
 # if mode indicator wasn't setup by theme, define default
 if [[ "$MODE_INDICATOR" == "" ]]; then

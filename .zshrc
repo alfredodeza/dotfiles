@@ -134,6 +134,18 @@ alias Vimrc='mvim ~/.vimrc'
 alias vimrc='vim ~/.vimrc'
 alias gst='git status'
 
+vsed() {
+  # call vim on a file (or glob) to perform a search and replace operation
+  # with confirmation. Does not save automagically.
+  search=$1
+  replace=$2
+  shift
+  shift
+  vim -c "bufdo! set eventignore-=Syntax| %s/$search/$replace/gce" $*
+
+}
+
+
 # I hate you LDAP completion of usernames
 zstyle ':completion:*' users {adeza,root,cmg}
 

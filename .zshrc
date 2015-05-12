@@ -136,7 +136,11 @@ alias gst='git status'
 
 vsed() {
   # call vim on a file (or glob) to perform a search and replace operation
-  # with confirmation. Does not save automagically.
+  # with confirmation. Does not save automagically. Example usage:
+  #     vsed foo bar *.py
+  # Will search for 'foo' and replace it with 'bar' in all matching *.py files.
+  # It also supports globbing for recursive files:
+  #     vsed foo bar **/*.py
   search=$1
   replace=$2
   shift

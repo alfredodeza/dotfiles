@@ -80,7 +80,7 @@ if has("gui_running")
   set go-=T                                " No toolbar
   set guioptions-=L                        " No scrollbar
   set guioptions-=r
-  set lines=999 columns=999                " open as large as possible
+  "set lines=999 columns=999                " open as large as possible
   highlight SpellBad gui=undercurl guisp=Orange
 else
     set mouse=n
@@ -92,8 +92,8 @@ set encoding=utf-8
 
 " All status line
 set statusline+=%*                           " switch back to normal status color
-set statusline+=%-4{bondsman#Bail()}%*       " give me a branch name (is modified?)
-set statusline=%#ErrorMsg#                   " set the highlight to error
+set statusline+=%{bondsman#Bail()}%*       " give me a branch name (is modified?)
+set statusline+=%#ErrorMsg#                   " set the highlight to error
 set statusline+=%{khuno#Status()}%*          " Tell me how many Flake errors I have
 set statusline+=%*                           " switch back to normal status color
 set statusline+=%{Collapse(expand('%:p'))}   " absolute path truncated
@@ -151,13 +151,16 @@ autocmd BufNewFile,BufRead,BufEnter *.py call s:SelectTestRunner()
 
 " For xml, xhtml and html let's use 2 spaces of indentation
 autocmd FileType html,xhtml,xml,yaml,yml setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2
-autocmd FileType html call s:SelectSyntax()
+"autocmd FileType html call s:SelectSyntax()
 
 " For VimL do 2 spaces as well
 autocmd FileType vim setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2
 
 " Less should look like CSS, right?
 autocmd BufNewFile,BufRead *.less setlocal ft=css
+
+" modula is not really modula, it is markdown
+autocmd BufNewFile,BufRead *.md setlocal ft=markdown
 
 " For Makefilels let's use tabs
 autocmd FileType make setlocal shiftwidth=4 tabstop=4 softtabstop=4
@@ -201,6 +204,7 @@ inoremap <right> <nop>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set clipboard=unnamed                      " copies y, yy, d, D, dd and other to the
                                            " system clipboard
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Plugin specific options
@@ -625,9 +629,9 @@ function! ToggleFocusMode()
     "set foldcolumn=12
     set noruler
     set nocursorline
-    hi FoldColumn ctermbg=none
-    hi LineNr ctermfg=8 ctermbg=none
-    hi NonText ctermfg=8
+    hi FoldColumn ctermbg=none guibg=fg
+    hi LineNr ctermfg=8 ctermbg=NONE guifg=bg
+    hi NonText ctermfg=8 guifg=bg
     set nowrap
     set nolinebreak
 
@@ -651,8 +655,11 @@ function! ToggleFocusMode()
     let l:highlightfgbgcolor = "ctermfg=8" . " " . l:highlightbgcolor
     let l:ctermfg = cterm_colors[0]
     let l:ctermbg = cterm_colors[1]
-    let l:no_color = "ctermfg=" . l:ctermbg ." ctermbg=" . l:ctermbg
-    exec("hi Normal " . "ctermfg=" .l:ctermfg )
+    let l:guifg = cterm_colors[2]
+    let l:guibg = cterm_colors[3]
+    let l:no_color = "ctermfg=" . l:ctermbg ." ctermbg=" . l:ctermbg . " guifg=" . l:guifg . " guibg=" . l:guibg
+    echom l:no_color
+    exec("hi Normal " . "ctermfg=" .l:ctermfg . " guifg=" . l:guifg )
     exec("hi VertSplit " . l:no_color )
     exec("hi NonText " . l:no_color )
     exec("hi StatusLine " . l:no_color )
@@ -682,9 +689,17 @@ endfunction
 function! Blackout()
         redir => current | silent highlight Normal | redir END
         let current = substitute(current, " xxx ","  ", "")
-        let ctermbg = matchlist(current, '\vctermbg\=(.*)')[1]
-        let ctermfg = matchlist(current, '\vctermfg\=(.*)')[1]
-        return [ctermfg, ctermbg]
+        let guibg = matchlist(current, '\vguibg\=(.*)')[1]
+        let guifg = matchlist(current, '\vguifg\=(.*)\s+')[1]
+        "let ctermbg = matchlist(current, '\vctermbg\=(.*)\s+')[1]
+        let ctermbg = matchlist(current, '\vctermbg\=(\d+)\s+')[1]
+        let ctermfg = matchlist(current, '\vctermfg\=(\d+)\s+')[1]
+        "let ctermfg = matchlist(current, '\vctermfg\=(.*)\s+')[1]
+        echom guibg
+        echom guifg
+        echom ctermfg
+        echom ctermbg
+        return [ctermfg, ctermbg, guifg, guibg]
 endfunction
 
 if has('persistent_undo')
@@ -748,3 +763,16 @@ function! PyVersion()
   let major_version = get(matchlist(out, '\d'), 0, '2')
   echo "This is Python version " . major_version
 endfunction
+
+
+
+" Highlight the word under the cursor so variable names are visible
+let s:python_keywords=split(system('python -c "import keyword; print \",\".join(dir(__builtins__) + keyword.kwlist)"'), ',')
+function! s:Highlight_Python_Variables()
+    let g:word = expand("<cword>")
+    if index(s:python_keywords, g:word) < 0
+        "exe printf('match IncSearch /\<%s\>/', g:word)
+        exe printf('match TabLineFill /\<%s\>/', g:word)
+    endif
+endfunction
+autocmd CursorMoved * if &ft ==# 'python' | silent! call s:Highlight_Python_Variables() | endif

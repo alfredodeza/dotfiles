@@ -8,12 +8,19 @@
 [push]
 	default = tracking
 [format]
-    pretty=format:%C(yellow)%h%Creset -%C(red)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset
+    #pretty=format:%C(yellow)%h%Creset -%C(red)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset
 [init]
 	templatedir = ~/.git_template
 [alias]
 	ctags = !.git/hooks/ctags
-	workprofile = config user.email \"alfredo.deza@inktank.com\"
+	workprofile = config user.email \"adeza@redhat.com\"
+    welp = reset --soft HEAD~1
+    pu = !"git fetch origin -v; git fetch upstream -v; git merge --ff upstream/master"
 [merge]
+	tool = vimdiff
+	conflictstyle = diff3
+[mergetool]
+	keepBackup = false
+[diff]
     tool = vimdiff
 	conflictstyle = diff3

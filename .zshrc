@@ -112,10 +112,9 @@ ssh-copy-key() {
     if [ $2 ]; then
         key=$2
     else
-        key="~/.ssh/id_rsa.pub"
+        key="$HOME/.ssh/id_rsa.pub"
     fi
-
-    ssh ${1} "echo `cat $key` >> ~/.ssh/authorized_keys"
+    cat "$key" | ssh ${1} 'umask 0077; mkdir -p .ssh; cat >> .ssh/authorized_keys'
 }
 
 

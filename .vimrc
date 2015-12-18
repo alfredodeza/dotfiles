@@ -43,6 +43,9 @@ set nosmartindent
 " Fixes Comenting hash indentation
 inoremap # X<BS>#
 
+" NeoVim sets incsearch by default and I don't like it
+set noincsearch
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Display
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -215,7 +218,11 @@ let g:chapa_default_mappings = 1
 " Posero
 let g:posero_default_mappings = 1
 
+" Khuno
+let g:khuno_max_line_length=101
+
 set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*.pyc
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Python
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -518,14 +525,14 @@ function! GitIsModified() abort
         " change dir to where coverage is
         " and do all the magic we need
         if original_dir
-            exe "cd " . has_git
+            exe "cd " . '"' . has_git . '"'
             let cmd = "git status -s 2> /dev/null""
             let out = system(cmd)
             if out != ""
                 let rvalue = 1
             endif
             " Finally get back to where we initially where
-            exe "cd " . original_dir
+            exe "cd " . '"' . original_dir . '"'
             return rvalue
         else
             return ''

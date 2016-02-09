@@ -148,6 +148,17 @@ vsed() {
 
 }
 
+ptj() {
+  # A small utility to wrap `sips` (the scriptable image processing system)
+  # included in OSX, so that converting a PDF to JPEG is as easy as just
+  # providing the path to the PDF.
+
+  filename=$1
+  trimmed_filename="${filename%%.*}"
+  command="sips -s format jpeg $filename --out $trimmed_filename.jpg"
+  echo $command
+  $command
+}
 
 # I hate you LDAP completion of usernames
 zstyle ':completion:*' users {adeza,root,cmg}

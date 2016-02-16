@@ -132,6 +132,7 @@ alias cls='clear; ls'
 alias Vimrc='mvim ~/.vimrc'
 alias vimrc='vim ~/.vimrc'
 alias gst='git status'
+alias timestamp='date -j -f "%a %b %d %T %Z %Y" "`date`" "+%s"'
 
 vsed() {
   # call vim on a file (or glob) to perform a search and replace operation
@@ -159,6 +160,15 @@ ptj() {
   echo $command
   $command
 }
+
+fix() {
+    if [ "$1" == "bluetooth" ]; then
+        sudo kextunload -b com.apple.iokit.BroadcomBluetoothHostControllerUSBTransport
+        sudo kextload -b com.apple.iokit.BroadcomBluetoothHostControllerUSBTransport
+    fi
+}
+
+
 
 # I hate you LDAP completion of usernames
 zstyle ':completion:*' users {adeza,root,cmg}

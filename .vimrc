@@ -107,6 +107,9 @@ set statusline+=%w                           " are we in a preview window
 set statusline+=\ \ \ %{Collapse(Getcwd())}  " current working dir truncated
 set statusline+=%=                           " right align
 set statusline+=\ \ \ \ %y                   " what the file type
+set statusline+=[
+set statusline+=%{WordCount()}
+set statusline+=]
 set statusline+=[                            "
 set statusline+=\ Line:                      "
 set statusline+=%3l/                         " Line number with padding
@@ -140,7 +143,7 @@ set nocursorline                           " Don't highlight where the cursor is
 set shellcmdflag=-c                       " Tell the shell it is OK not to be interactive
 
 " default to 4 spaces of indentation
-set tabstop=4 expandtab shiftwidth=4 softtabstop=4
+"set tabstop=4 expandtab shiftwidth=4 softtabstop=4
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Autocommands
@@ -162,6 +165,9 @@ autocmd FileType vim setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2
 " Less should look like CSS, right?
 autocmd BufNewFile,BufRead *.less setlocal ft=css
 
+" My god ubuntu do not set fold enable on RST what is wrong with you
+autocmd BufNewFile,BufRead *.rst setlocal nofoldenable
+
 " modula is not really modula, it is markdown
 autocmd BufNewFile,BufRead *.md setlocal ft=markdown
 
@@ -176,6 +182,10 @@ autocmd BufNewFile,BufRead *.json call jacinto#syntax()
 
 " Python whitespace
 au FileType python setlocal tabstop=4 expandtab shiftwidth=4 softtabstop=4
+
+" Asciidoc - don't add newlines to break
+autocmd FileType asciidoc setlocal nolist linebreak showbreak=+++ columns=100 textwidth=99999 formatoptions=l number
+autocmd BufNewFile,BufRead,VimResized,BufEnter,BufReadPost *.asciidoc setlocal columns=100
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Movement Settings and Mappings
@@ -205,9 +215,8 @@ inoremap <right> <nop>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Other Settings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set clipboard=unnamed                      " copies y, yy, d, D, dd and other to the
+set clipboard=unnamedplus                  " copies y, yy, d, D, dd and other to the
                                            " system clipboard
-
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Plugin specific options
@@ -222,6 +231,8 @@ let g:posero_default_mappings = 1
 let g:khuno_max_line_length=101
 
 set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*.pyc
+
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Python
@@ -280,9 +291,6 @@ nnoremap <Leader>2 yypVr-
 
 " Count current word
 nmap <Leader>w <Esc>:call Count(expand("<cword>"))<CR>
-
-" gundo
-nnoremap <Leader>u <ESC>:GundoToggle<CR>
 
 " Insert blank lines and stay in normal mode dude
 " blank line  below
@@ -783,3 +791,16 @@ function! s:Highlight_Python_Variables()
     endif
 endfunction
 autocmd CursorMoved * if &ft ==# 'python' | silent! call s:Highlight_Python_Variables() | endif
+
+
+function! WordCount()
+  let s:word_count = 0
+  let pos = getpos('.')
+  try
+    let s:word_count = str2nr(split(execute("silent normal g\<c-g>"))[11])
+    call setpos('.', pos)
+  catch /^Vim\%((\a\+)\)\=:E684/
+    return 0
+  endtry
+  return s:word_count
+endfunction

@@ -5,6 +5,7 @@ virtual_envs=($HOME/python $HOME/.virtualenvs)
 virtualenvshome="$HOME/.virtualenvs"
 
 zle_highlight=(region:standout special:standout suffix:bold isearch:underline)
+fpath=(~/.zsh $fpath)
 
 export PIP_DOWNLOAD_CACHE=$HOME/.pip_cache
 
@@ -25,7 +26,10 @@ zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path $HOME/.zsh/cache
 
 # Get homebrew's path first and then other custom bits
-export PATH=/usr/local/bin:$PATH:/usr/local/sbin:/usr/local/mysql/bin:$HOME/bin:$HOME/bin/google_appengine:/usr/texbin
+export PATH=/usr/local/bin:$PATH:/usr/local/sbin:/usr/local/mysql/bin:$HOME/bin:$HOME/bin/google_appengine:/usr/texbin:/usr/local/go/bin
+export GOROOT=/usr/local/go
+export GOPATH=$HOME/go
+export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 
 # By default, zsh delays 'Esc' to get into normal mode by half
 # a second. Reduce this to 0.1s
@@ -133,7 +137,7 @@ alias Vimrc='mvim ~/.vimrc'
 alias vimrc='vim ~/.vimrc'
 alias gst='git status'
 alias timestamp='date -j -f "%a %b %d %T %Z %Y" "`date`" "+%s"'
-
+alias pbcopy='xclip -selection clipboard'
 vsed() {
   # call vim on a file (or glob) to perform a search and replace operation
   # with confirmation. Does not save automagically. Example usage:

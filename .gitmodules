@@ -22,3 +22,6 @@
 [submodule ".zsh-plugins"]
 	path = .zsh-plugins
 	url = git://github.com/alfredodeza/zsh-plugins.git
+[submodule "dotdrop"]
+	path = dotdrop
+	url = https://github.com/deadc0de6/dotdrop.git

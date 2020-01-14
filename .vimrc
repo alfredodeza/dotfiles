@@ -184,8 +184,9 @@ autocmd BufNewFile,BufRead *.json call jacinto#syntax()
 au FileType python setlocal tabstop=4 expandtab shiftwidth=4 softtabstop=4
 
 " Asciidoc - don't add newlines to break
-autocmd FileType asciidoc setlocal nolist linebreak showbreak=+++ columns=100 textwidth=99999 formatoptions=l number
-autocmd BufNewFile,BufRead,VimResized,BufEnter,BufReadPost *.asciidoc setlocal columns=100
+autocmd FileType asciidoc,markdown setlocal nolist linebreak showbreak=+++ columns=100 textwidth=99999 formatoptions=l number
+autocmd BufNewFile,BufRead,VimResized,BufEnter,BufReadPost (*.asciidoc,*.md) setlocal columns=100
+autocmd FileType asciidoc,markdown highlight ColorColumn ctermbg=16 | setlocal colorcolumn=80
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Movement Settings and Mappings

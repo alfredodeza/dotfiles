@@ -122,11 +122,8 @@ ssh-copy-key() {
 }
 
 
-alias bitch='sudo '
-
 # make ls colors! regardless of the OS! fantastic!
 ls --color -d . &>/dev/null 2>&1 && alias ls='ls --color=if-tty' || alias ls='ls -G'
-
 
 alias pg='ps aux | grep -v grep | grep $1'
 alias pgi='ps aux | grep -v grep | grep -i $1'
@@ -164,15 +161,6 @@ ptj() {
   echo $command
   $command
 }
-
-fix() {
-    if [ "$1" == "bluetooth" ]; then
-        sudo kextunload -b com.apple.iokit.BroadcomBluetoothHostControllerUSBTransport
-        sudo kextload -b com.apple.iokit.BroadcomBluetoothHostControllerUSBTransport
-    fi
-}
-
-
 
 # I hate you LDAP completion of usernames
 zstyle ':completion:*' users {adeza,root,cmg}

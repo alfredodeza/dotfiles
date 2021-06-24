@@ -216,7 +216,7 @@ inoremap <right> <nop>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Other Settings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set clipboard=unnamedplus                  " copies y, yy, d, D, dd and other to the
+set clipboard=unnamed                      " copies y, yy, d, D, dd and other to the
                                            " system clipboard
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

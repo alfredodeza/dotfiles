@@ -25,7 +25,6 @@ cleandotfiles:
 	-rm -rf $(BUILDDIR)dotfiles
 
 dotfiles:
-	$(DOTFILES)
 	ln -sf $(BUILDDIR)dotfiles/.vimrc  $(BUILDDIR).vimrc
 	ln -sf $(BUILDDIR)dotfiles/.zshrc  $(BUILDDIR).zshrc
 	ln -sf $(BUILDDIR)dotfiles/.inputrc  $(BUILDDIR).inputrc
@@ -41,11 +40,9 @@ zsh:
 
 vim:
 	-mkdir -p ~/.vim
-	-mkdir -p ~/.vim/colors
-	-mkdir -p ~/.vim/bundle
+	ln -sf $(BUILDDIR)dotfiles/.vim/bundle  $(BUILDDIR).vim/
+	ln -sf $(BUILDDIR)dotfiles/.vim/colors  $(BUILDDIR).vim/
 	-cd /tmp
-	git clone https://github.com/altercation/vim-colors-solarized.git  /tmp/solarized
-	-mv /tmp/solarized/colors/solarized.vim $(BUILDDIR).vim/colors/
 	@echo "grabbing pathogen"
 	-cd /tmp
 	git clone https://github.com/tpope/vim-pathogen.git /tmp/pathogen

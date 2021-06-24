@@ -19,8 +19,7 @@ cleanvim:
 	-rm -rf $(BUILDDIR).vim
 
 cleanzsh:
-	-rm -rf $(BUILDDIR).zshrc
-	-rm -rf $(BUILDDIR).oh-my-zsh
+	-rm -rf $(BUILDDIR).zsh
 
 cleandotfiles:
 	-rm -rf $(BUILDDIR)dotfiles
@@ -30,15 +29,13 @@ dotfiles:
 	ln -sf $(BUILDDIR)dotfiles/.vimrc  $(BUILDDIR).vimrc
 	ln -sf $(BUILDDIR)dotfiles/.zshrc  $(BUILDDIR).zshrc
 	ln -sf $(BUILDDIR)dotfiles/.inputrc  $(BUILDDIR).inputrc
-
+	mkdir -p $(BUILDDIR).zsh
 zsh:
-	-git clone https://github.com/robbyrussell/oh-my-zsh.git $(BUILDDIR).oh-my-zsh
-	-cd ~/.oh-my-zsh/plugins
-	@echo "Installing oh my zsh"
-	-rm -rf python
-	git clone https://alfredodeza@github.com/alfredodeza/zsh-plugins.git
-	mv zsh-plugins/python .
-	rm -rf zsh-plugins
+	@echo "Installing ZSH plugins"
+	mkdir -p $(BUILDDIR).zsh
+	cp -r .zsh-plugins/pytest $(BUILDDIR).zsh/
+	cp -r .zsh-plugins/python $(BUILDDIR).zsh/
+	cp -r .zsh-plugins/vi $(BUILDDIR).zsh/
 	@echo
 	@echo "Build finished for zsh."
 

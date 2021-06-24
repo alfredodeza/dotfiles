@@ -1,1 +1,7 @@
 Just my dotted files. Mainly VIM and ZSH.
+
+```
+$ git@github.com:alfredodeza/dotfiles.git
+$ cd dotfiles 
+$ make help
+```

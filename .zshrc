@@ -134,7 +134,6 @@ alias Vimrc='mvim ~/.vimrc'
 alias vimrc='vim ~/.vimrc'
 alias gst='git status'
 alias timestamp='date -j -f "%a %b %d %T %Z %Y" "`date`" "+%s"'
-alias pbcopy='xclip -selection clipboard'
 vsed() {
   # call vim on a file (or glob) to perform a search and replace operation
   # with confirmation. Does not save automagically. Example usage:

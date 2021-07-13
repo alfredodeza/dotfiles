@@ -1,7 +1,7 @@
 # Before anything, we call compinit so completion works
 autoload -Uz compinit; compinit
 
-virtual_envs=($HOME/python $HOME/.virtualenvs)
+virtual_envs=($HOME/code $HOME/.virtualenvs)
 virtualenvshome="$HOME/.virtualenvs"
 
 zle_highlight=(region:standout special:standout suffix:bold isearch:underline)
@@ -164,8 +164,9 @@ ptj() {
 # I hate you LDAP completion of usernames
 zstyle ':completion:*' users {adeza,root,cmg}
 
-# Build/Compile Correctly and faster
-export ARCHFLAGS="-arch i386 -arch x86_64"
+# Build/Compile Correctly and faster. Commented out options no longer
+# work for Apple M1 silicon
+#export ARCHFLAGS="-arch i386 -arch x86_64"
 #export ARCHFLAGS="-arch x86_64"
 export MAKEOPTS="-j17"
 

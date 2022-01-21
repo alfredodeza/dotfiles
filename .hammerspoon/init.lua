@@ -3,6 +3,8 @@ units = {
   right30       = { x = 0.70, y = 0.00, w = 0.30, h = 1.00 },
   right70       = { x = 0.30, y = 0.00, w = 0.70, h = 1.00 },
   left70        = { x = 0.00, y = 0.00, w = 0.70, h = 1.00 },
+  right50       = { x = 0.50, y = 0.00, w = 0.50, h = 1.00 },
+  left50        = { x = 0.00, y = 0.00, w = 0.50, h = 1.00 },
   left30        = { x = 0.00, y = 0.00, w = 0.30, h = 1.00 },
   top50         = { x = 0.00, y = 0.00, w = 1.00, h = 0.50 },
   bot50         = { x = 0.00, y = 0.50, w = 1.00, h = 0.50 },
@@ -25,6 +27,9 @@ hs.hotkey.bind(mash, 'o', function() hs.window.focusedWindow():move(units.botrig
 hs.hotkey.bind(mash, "i", function() hs.window.focusedWindow():move(units.upright30,  nil, true) end)
 hs.hotkey.bind(mash, 'm', function() hs.window.focusedWindow():move(units.maximum,    nil, true) end)
 hs.hotkey.bind(mash, ']', function() hs.window.focusedWindow():move(units.center,     nil, true) end)
+hs.hotkey.bind(mash, 'f', function() hs.window.focusedWindow():move(units.maximum,    nil, true) end)
+hs.hotkey.bind(mash, 'n', function() hs.window.focusedWindow():move(units.left50,    nil, true) end)
+hs.hotkey.bind(mash, '.', function() hs.window.focusedWindow():move(units.right50,    nil, true) end)
 
 
 hs.loadSpoon("SpoonInstall")
@@ -36,7 +41,6 @@ Install:andUse("KSheet",
                    toggle = { mash, "/" }
 }})
 
-Install:andUse("MouseCircle", { hotkeys = { show = { mash, "=" }}})
 
 Install:andUse("Seal",
                {

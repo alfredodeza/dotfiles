@@ -21,12 +21,18 @@ if [[ -e $HOME/.zsh ]]; then
     source $HOME/.zsh/vi/zle_vi_visual.zsh
 fi
 
+if [[ -e $HOME/.secrets ]]; then
+    for secret_file in `ls $HOME/.secrets/*.sh`; do
+        source $secret_file
+    done
+fi
+
 # Cache time for uber fast completion
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path $HOME/.zsh/cache
 
 # Get homebrew's path first and then other custom bits
-export PATH=/usr/local/bin:$PATH:/usr/local/sbin:/usr/local/mysql/bin:$HOME/bin:$HOME/bin/google_appengine:/usr/texbin:/usr/local/go/bin
+export PATH=/opt/homebrew/bin:$PATH:/usr/local/sbin:/usr/local/mysql/bin:$HOME/bin:$HOME/bin/google_appengine:/usr/texbin:/usr/local/go/bin
 export GOROOT=/usr/local/go
 export GOPATH=$HOME/go
 export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
@@ -112,6 +118,13 @@ alias ......="cd ../../../../.."
 # Function Time!
 #
 
+
+# Create a directory and then cd into it
+function take() {
+  mkdir -p $@ && cd ${@:$#}
+}
+
+
 ssh-copy-key() {
     if [ $2 ]; then
         key=$2
@@ -134,6 +147,9 @@ alias Vimrc='mvim ~/.vimrc'
 alias vimrc='vim ~/.vimrc'
 alias gst='git status'
 alias timestamp='date -j -f "%a %b %d %T %Z %Y" "`date`" "+%s"'
+alias lower='tr "[:upper:]" "[:lower:]"'
+alias upper='tr "[:lower:]" "[:upper:]"'
+
 vsed() {
   # call vim on a file (or glob) to perform a search and replace operation
   # with confirmation. Does not save automagically. Example usage:
@@ -161,6 +177,41 @@ ptj() {
   $command
 }
 
+
+# Azure functions
+# Consider a plugin for these
+azure-sp() {
+  # Load an Azure Service Principal JSON file as environment variables
+  # prefixed with AZURE_SERVICE_PRINCIPAL_ so that they can be referenced in
+  # other scripts when needed
+  if [[ -e $HOME/.secrets/api-service-principal.json ]]; then
+      cat $HOME/.secrets/api-service-principal.json | j2env AZURE_SERVICE_PRINCIPAL_
+  fi
+}
+
+
+azure-token() {
+  # Create an Azure token - requires a Service Principal with secrets loaded
+  # as environment variables.
+  # WARNING: it produces stdout output with the token
+  URL="https://login.microsoftonline.com/$AZURE_SERVICE_PRINCIPAL_TENANT/oauth2/token"
+
+  ## Params
+  tenantId="tenantId=$AZURE_SERVICE_PRINCIPAL_TENANT"
+  client_id="client_id=$AZURE_SERVICE_PRINCIPAL_APPID"
+  client_secret="client_secret=$AZURE_SERVICE_PRINCIPAL_PASSWORD"
+  resource="resource=https://management.azure.com"
+  grant_type="grant_type=client_credentials"
+
+  ## Send the request
+  curl -s -X POST $URL \
+     -H "Content-Type: application/x-www-form-urlencoded" \
+     -d "$tenandId&$client_id&$client_secret&$resource&$grant_type"`
+
+  echo $result
+
+}
+
 # I hate you LDAP completion of usernames
 zstyle ':completion:*' users {adeza,root,cmg}
 
@@ -169,7 +220,10 @@ zstyle ':completion:*' users {adeza,root,cmg}
 #export ARCHFLAGS="-arch i386 -arch x86_64"
 #export ARCHFLAGS="-arch x86_64"
 export MAKEOPTS="-j17"
-
+export LDFLAGS="-L/opt/homebrew/opt/openblas/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/openblas/include"
+export PKG_CONFIG_PATH="/opt/homebrew/opt/openblas/lib/pkgconfig"
+export CFLAGS="-falign-functions=8 ${CFLAGS}"
 export LESS=FRSXQ
 
 # Load PythonStartup File
@@ -231,3 +285,19 @@ zstyle ':vcs_info:*' enable git svn hg
 precmd () { vcs_info }
 
 PROMPT='${FROM_VIM}$(hostname -s)${vcs_info_msg_0_}%{$fg[green]%} %30<..<${PWD/#$HOME/~}%<< %{$reset_color%}${VIMODE} '
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/Users/alfredo/miniforge3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/Users/alfredo/miniforge3/etc/profile.d/conda.sh" ]; then
+        . "/Users/alfredo/miniforge3/etc/profile.d/conda.sh"
+    else
+        export PATH="/Users/alfredo/miniforge3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+

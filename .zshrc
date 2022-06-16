@@ -212,7 +212,7 @@ azure-token() {
 
 }
 
-# I hate you LDAP completion of usernames
+# Disable LDAP completion of usernames
 zstyle ':completion:*' users {adeza,root,cmg}
 
 # Build/Compile Correctly and faster. Commented out options no longer

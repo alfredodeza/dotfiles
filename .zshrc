@@ -206,7 +206,7 @@ azure-token() {
   ## Send the request
   curl -s -X POST $URL \
      -H "Content-Type: application/x-www-form-urlencoded" \
-     -d "$tenandId&$client_id&$client_secret&$resource&$grant_type"`
+     -d "$tenandId&$client_id&$client_secret&$resource&$grant_type"
 
   echo $result
 

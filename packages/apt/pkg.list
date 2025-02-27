@@ -1,0 +1,11 @@
+ubuntu-restricted-extras
+wget
+gpg
+build-essential
+ffmpeg
+gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-plugins-good gstreamer1.0-libav
+libavcodec-extra
+libfdk-aac2
+vim-gtk3
+x264
+x265

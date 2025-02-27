@@ -1,0 +1,3 @@
+rust##curl -sSf https://sh.rustup.rs | sh -s -- -y
+minijinja-cli##curl --proto '=https' --tlsv1.2 -LsSf https://github.com/mitsuhiko/minijinja/releases/download/2.6.0/minijinja-cli-installer.sh | sh
+zed##curl -f https://zed.dev/install.sh | sh

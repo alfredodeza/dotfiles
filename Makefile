@@ -47,3 +47,29 @@ vim:
 	-cd /tmp
 	git clone https://github.com/tpope/vim-pathogen.git /tmp/pathogen
 	-mv /tmp/pathogen/autoload $(BUILDDIR).vim/
+
+# Dynamically generate targets for each package
+define make-package-target
+.PHONY: install-$(1)
+install-$(1):
+	@bash -c "source lib/installer.sh && install_packages $(1)"
+endef
+
+
+PACKAGES := $(notdir $(wildcard packages/*))
+
+# Create a target for each package
+$(foreach pkg,$(PACKAGES),$(eval $(call make-package-target,$(pkg))))
+
+# Install all packages
+install:
+	@for pkg in $(PACKAGES); do \
+		$(MAKE) install-$$pkg; \
+	done
+
+# List available packages
+list:
+	@echo "Available packages:"
+	@for pkg in $(PACKAGES); do \
+		echo "  $$pkg"; \
+	done

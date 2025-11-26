@@ -118,6 +118,90 @@ alias ......="cd ../../../../.."
 # Function Time!
 #
 
+catn() {
+    # Accept optional glob pattern, default to all files recursively
+    # Skips directories that ag (silversearcher) would ignore
+    local pattern="${1:-**/*}"
+
+    # Enable extended globbing
+    setopt local_options extended_glob null_glob
+
+    # Build exclusion pattern for ag-ignored directories
+    # Uses zsh's ^ negation operator
+    local excluded="^(*/|)(.git|.svn|.hg|.bzr|node_modules|.npm|.yarn|.pnpm|.cache|.bundle|vendor|build|dist|target|.sass-cache|.tox|.pytest_cache|__pycache__|.mypy_cache|.venv|venv|.virtualenv)/*"
+
+    # Collect matching files, applying exclusions
+    local files=()
+    for file in ${~pattern}(N.); do
+        # Skip if file is in an ignored directory
+        if [[ ! "$file" =~ "(^|/)(.git|.svn|.hg|.bzr|node_modules|.npm|.yarn|.pnpm|.cache|.bundle|vendor|build|dist|target|.sass-cache|.tox|.pytest_cache|__pycache__|.mypy_cache|.venv|venv|.virtualenv)($|/)" ]]; then
+            files+=("$file")
+        fi
+    done
+
+    # Concatenate files, show on terminal AND copy to clipboard
+    (for file in "${files[@]}"; do
+        echo "=== $file ==="
+        cat "$file"
+        echo
+    done) | tee >(xclip -selection clipboard)
+}
+
+
+transc-srt() {
+    file=$1
+    filepath=$(dirname `realpath $file`)
+    output="$filepath/transcripts"
+    echo $output
+    mkdir -p "$output"
+    filename=$(basename "$file")
+    name="${filename%.*}"
+
+    ffmpeg -loglevel error -i "$file" -f wav -ac 1 -acodec pcm_s16le -ar 16000 - |
+      whisper --model /home/alfredo/code/whisper.cpp/models/ggml-base.en.bin  --threads 8 --processors 2 --output-srt --output-file "$output/$name" -f -
+}
+
+transcf() {
+    file=$1
+    filepath=$(dirname `realpath $file`)
+    output="$filepath/transcripts"
+    echo $output
+    mkdir -p "$output"
+    filename=$(basename "$file")
+    name="${filename%.*}"
+
+    ffmpeg -loglevel error -i "$file" -f wav -ac 1 -acodec pcm_s16le -ar 16000 - |
+      whisper --model /home/alfredo/code/whisper.cpp/models/ggml-base.en.bin  --threads 8 --processors 2 --output-txt --output-file "$output/$name" -f -
+}
+
+
+transc() {
+    output="${1%/}/transcripts"
+    mkdir -p "$output"
+    for file in $(find "$1" -name '*.mp4' -print0); do
+
+      filename=$(basename "$file")
+      name="${filename%.*}"
+
+      ffmpeg -loglevel error -i "$file" -f wav -ac 1 -acodec pcm_s16le -ar 16000 - |
+        whisper --model /home/alfredo/code/whisper.cpp/models/ggml-base.en.bin  --threads 2 --processors 24 --output-txt --output-file "$output/$name" -f -
+
+    done
+}
+#
+
+# Create an HTML file from a template
+function slidegen() {
+  data_path=$1
+  template_path="/home/alfredo/tmp/slides.j2"
+  # Extract directory and filename from data_path
+  dir_path=$(dirname "$data_path")
+  base_name=$(basename "$data_path" .yml)
+
+  # Create output path with .html extension
+  output_path="${dir_path}/${base_name}.html"
+  minijinja-cli $template_path $data_path -o $output_path
+}
 
 # Create a directory and then cd into it
 function take() {
@@ -149,6 +233,7 @@ alias gst='git status'
 alias timestamp='date -j -f "%a %b %d %T %Z %Y" "`date`" "+%s"'
 alias lower='tr "[:upper:]" "[:lower:]"'
 alias upper='tr "[:lower:]" "[:upper:]"'
+alias pbcopy='xclip -selection clipboard'
 
 vsed() {
   # call vim on a file (or glob) to perform a search and replace operation
@@ -219,11 +304,12 @@ zstyle ':completion:*' users {adeza,root,cmg}
 # work for Apple M1 silicon
 #export ARCHFLAGS="-arch i386 -arch x86_64"
 #export ARCHFLAGS="-arch x86_64"
-export MAKEOPTS="-j17"
-export LDFLAGS="-L/opt/homebrew/opt/openblas/lib"
-export CPPFLAGS="-I/opt/homebrew/opt/openblas/include"
-export PKG_CONFIG_PATH="/opt/homebrew/opt/openblas/lib/pkgconfig"
-export CFLAGS="-falign-functions=8 ${CFLAGS}"
+#export MAKEOPTS="-j17"
+#export LDFLAGS="-L/opt/homebrew/opt/openblas/lib"
+#export CPPFLAGS="-I/opt/homebrew/opt/openblas/include"
+#export PKG_CONFIG_PATH="/opt/homebrew/opt/openblas/lib/pkgconfig"
+#export CFLAGS="-falign-functions=8 ${CFLAGS}"
+export REVEALJS_PATH="/home/alfredo/code/reveal.js"
 export LESS=FRSXQ
 
 # Load PythonStartup File
@@ -301,3 +387,9 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+. "$HOME/.local/bin/env"

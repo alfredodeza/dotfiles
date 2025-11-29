@@ -22,7 +22,7 @@ if [[ -e $HOME/.zsh ]]; then
 fi
 
 if [[ -e $HOME/.secrets ]]; then
-    for secret_file in `ls $HOME/.secrets/*.sh`; do
+    for secret_file in `/usr/bin/ls $HOME/.secrets/*.sh`; do
         source $secret_file
     done
 fi
@@ -32,7 +32,8 @@ zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path $HOME/.zsh/cache
 
 # Get homebrew's path first and then other custom bits
-export PATH=/opt/homebrew/bin:$PATH:/usr/local/sbin:/usr/local/mysql/bin:$HOME/bin:$HOME/bin/google_appengine:/usr/texbin:/usr/local/go/bin
+#export PATH=/opt/homebrew/bin:$PATH:/usr/local/sbin:/usr/local/mysql/bin:$HOME/bin:$HOME/bin/google_appengine:/usr/texbin:/usr/local/go/bin
+export PATH=/home/alfredo/.local/bin:/home/alfredo/.local/share/mise/installs/node/25.1.0/bin:/home/alfredo/.local/share/omarchy/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/home/alfredo/.cargo/bin
 export GOROOT=/usr/local/go
 export GOPATH=$HOME/go
 export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
@@ -113,6 +114,27 @@ alias ....="cd ../../.."
 alias .....="cd ../../../.."
 alias ......="cd ../../../../.."
 
+# make ls colors! regardless of the OS! fantastic!
+ls --color -d . &>/dev/null 2>&1 && alias ls='ls --color=if-tty' || alias ls='ls -G'
+
+alias pg='ps aux | grep -v grep | grep $1'
+alias pgi='ps aux | grep -v grep | grep -i $1'
+alias \:q='exit'
+alias \:Q='exit'
+alias cls='clear; ls'
+alias Vimrc='mvim ~/.vimrc'
+alias vimrc='vim ~/.vimrc'
+alias gst='git status'
+alias timestamp='date -j -f "%a %b %d %T %Z %Y" "`date`" "+%s"'
+alias lower='tr "[:upper:]" "[:lower:]"'
+alias upper='tr "[:lower:]" "[:upper:]"'
+alias pbcopy='xclip -selection clipboard'
+
+
+# Try to load Omarchy aliases which are useful
+if [[ -e $HOME/.local/share/omarchy/default/bash/aliases ]]; then
+    source $HOME/.local/share/omarchy/default/bash/aliases
+fi
 
 #
 # Function Time!
@@ -297,18 +319,75 @@ azure-token() {
 
 }
 
+# Function to get suggestions and show in fzf
+# aprender-shell outputs: suggestion\tscore
+# suggestion may contain ASCII 31 (\x1F) separator between command and description
+_aprender_fzf_complete() {
+    # Skip if disabled
+    [[ "${APRENDER_DISABLED:-0}" == "1" ]] && return
+
+    # Get current command line
+    local current_line="$BUFFER"
+
+    # Skip if line too short
+    [[ "${#current_line}" -lt 2 ]] && return
+
+    # Get all suggestions from aprender-shell (up to 50)
+    # Format: suggestion\tscore where suggestion = "command\x1Fdescription" or just "command"
+    local suggestions
+    suggestions=$(aprender-shell suggest "$current_line" -c 50 2>/dev/null)
+
+    # Check if we got any suggestions
+    [[ -z "$suggestions" ]] && return
+
+    # Extract just the suggestions (field 1), discard scores (field 2)
+    local suggestions_only
+    suggestions_only=$(echo "$suggestions" | cut -f1)
+
+    # Use fzf with ASCII 31 (\x1F) as delimiter
+    # This splits "command\x1Fdescription" into two fields:
+    #   Field 1: command
+    #   Field 2: description
+    # --delimiter=$'\x1F'  Split on ASCII 31 (unit separator)
+    # --nth=1,2            Search in both command and description
+    # --with-nth=1,2       Display both command and description
+    # cut -d$'\x1F' -f1    Extract only the command (field 1)
+    local selected
+    selected=$(echo "$suggestions_only" | \
+        fzf --height=40% \
+            --reverse \
+            --border \
+            --prompt="❯ " \
+            --delimiter=$'\x1F' \
+            --nth=1,2 \
+            --with-nth=1,2 \
+            --bind 'ctrl-/:toggle-preview' \
+            --header='Type to filter on command or description • Enter accept • Esc cancel' \
+            --color='prompt:#7aa2f7,pointer:#bb9af7,marker:#9ece6a,header:#565f89' \
+            --preview='echo {1}' \
+            --preview-window=up:1:border-none \
+            --info=inline \
+            | cut -d$'\x1F' -f1)
+
+    # If user selected something, replace the buffer with ONLY the command
+    if [[ -n "$selected" ]]; then
+        BUFFER="$selected"
+        CURSOR=${#BUFFER}
+    fi
+
+    zle reset-prompt
+}
+
+# Bind to Ctrl+Space for fzf completion
+zle -N _aprender_fzf_complete
+bindkey '^@' _aprender_fzf_complete
+
+
 # Disable LDAP completion of usernames
 zstyle ':completion:*' users {adeza,root,cmg}
 
-# Build/Compile Correctly and faster. Commented out options no longer
-# work for Apple M1 silicon
-#export ARCHFLAGS="-arch i386 -arch x86_64"
-#export ARCHFLAGS="-arch x86_64"
-#export MAKEOPTS="-j17"
-#export LDFLAGS="-L/opt/homebrew/opt/openblas/lib"
-#export CPPFLAGS="-I/opt/homebrew/opt/openblas/include"
-#export PKG_CONFIG_PATH="/opt/homebrew/opt/openblas/lib/pkgconfig"
-#export CFLAGS="-falign-functions=8 ${CFLAGS}"
+# Build/Compile Correctly and faster. Need to revise compatible options
+#
 export REVEALJS_PATH="/home/alfredo/code/reveal.js"
 export LESS=FRSXQ
 
@@ -340,8 +419,18 @@ fi
 
 bindkey -v
 
-# Make sure Ctrl-R works
-bindkey '^R' history-incremental-search-backward
+  # fzf integration
+  if command -v fzf &> /dev/null; then
+    if [[ -f /usr/share/fzf/completion.zsh ]]; then
+      source /usr/share/fzf/completion.zsh
+    fi
+    if [[ -f /usr/share/fzf/key-bindings.zsh ]]; then
+      source /usr/share/fzf/key-bindings.zsh
+    fi
+  else
+    # Make sure Ctrl-R works
+    bindkey '^R' history-incremental-search-backward
+  fi
 
 # Make backspace work like vim
 bindkey '^?' backward-delete-char
@@ -371,25 +460,3 @@ zstyle ':vcs_info:*' enable git svn hg
 precmd () { vcs_info }
 
 PROMPT='${FROM_VIM}$(hostname -s)${vcs_info_msg_0_}%{$fg[green]%} %30<..<${PWD/#$HOME/~}%<< %{$reset_color%}${VIMODE} '
-
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/Users/alfredo/miniforge3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/Users/alfredo/miniforge3/etc/profile.d/conda.sh" ]; then
-        . "/Users/alfredo/miniforge3/etc/profile.d/conda.sh"
-    else
-        export PATH="/Users/alfredo/miniforge3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
-
-
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-. "$HOME/.local/bin/env"
